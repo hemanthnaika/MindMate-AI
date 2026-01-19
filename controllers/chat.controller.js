@@ -1,0 +1,88 @@
+import Groq from "groq-sdk";
+import { GROQ_API_KEY } from "../config/env.js";
+import ChatHistory from "../models/chat.model.js";
+
+const groq = new Groq({ apiKey: GROQ_API_KEY });
+
+const dangerWords = ["die", "kill", "suicide", "self harm", "end my life"];
+
+export const Chat = async (req, res, next) => {
+  try {
+    const user = req.session;
+
+    const { message } = req.body;
+    if (!message) {
+      const error = new Error("Message is required");
+      error.status = 400;
+      throw error;
+    }
+
+    // 🔹 Detect danger words
+    const isDanger = dangerWords.some((word) =>
+      message.toLowerCase().includes(word)
+    );
+
+    // 🔹 Get previous chat
+    let previousChat = await ChatHistory.findOne({ userId: user.id });
+
+    // 🔹 Clean previous messages (REMOVE _id)
+    let formattedMessages = [];
+    if (previousChat?.messages?.length) {
+      formattedMessages = previousChat.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+    }
+
+    // 🔹 System prompt
+    const systemPrompt = isDanger
+      ? `You are a mental wellness companion.
+         The user may be in emotional distress.
+         Respond with empathy.
+         Encourage contacting trusted people or helplines.
+         Do NOT provide medical advice.`
+      : `You are a friendly mental wellness companion.
+         Offer emotional support and positive suggestions.
+         Do not diagnose or give medical advice.`;
+
+    // 🔹 AI Request
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-20b",
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...formattedMessages, // ✅ previous conversation
+        { role: "user", content: message },
+      ],
+    });
+
+    const aiReply =
+      response.choices[0]?.message?.content || "I'm here to listen.";
+
+    // 🔹 Save conversation
+    await ChatHistory.findOneAndUpdate(
+      { userId: user.id },
+      {
+        $push: {
+          messages: [
+            { role: "user", content: message },
+            { role: "assistant", content: aiReply },
+          ],
+        },
+      },
+      {
+        upsert: true,
+        new: true,
+      }
+    );
+
+    // 🔹 Response
+    res.status(200).json({
+      success: true,
+      message: "Chat successful",
+      data: aiReply,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};

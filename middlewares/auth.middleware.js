@@ -1,3 +1,6 @@
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../lib/auth.js";
+
 export const authMiddleware = async (req, res, next) => {
   try {
     const session = await auth.api.getSession({
@@ -8,7 +11,7 @@ export const authMiddleware = async (req, res, next) => {
       error.status = 401;
       throw error;
     }
-    req.session = session;
+    req.session = session.user;
     next();
   } catch (error) {
     console.log(error);

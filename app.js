@@ -6,18 +6,25 @@ import cors from "cors";
 import { auth } from "./lib/auth.js";
 import UserRouter from "./routes/user.route.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import ChatRouter from "./routes/chat.route.js";
+
+import ConnectDB from "./config/db.js";
+import MoodRoute from "./routes/mood.route.js";
+
 const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ORIGIN, // Replace with your frontend's origin
-    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    origin: ORIGIN,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
 
 app.all("/api/auth/*", toNodeHandler(auth));
 app.use("/api/v1/user", UserRouter);
+app.use("/api/v1/ai", ChatRouter);
+app.use("/api/v1/mood", MoodRoute);
 
 app.use(errorMiddleware);
 app.get("/", (req, res) => {
@@ -26,4 +33,5 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  ConnectDB();
 });

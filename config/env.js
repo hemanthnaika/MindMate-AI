@@ -4,4 +4,4 @@ config({
   path: ".env",
 });
 
-export const { PORT, DB_URL,ORIGIN } = process.env;
+export const { PORT, DB_URL, ORIGIN, GROQ_API_KEY } = process.env;
