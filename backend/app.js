@@ -10,6 +10,7 @@ import ChatRouter from "./routes/chat.route.js";
 
 import ConnectDB from "./config/db.js";
 import MoodRoute from "./routes/mood.route.js";
+import HabitRoute from "./routes/habit.route.js";
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,8 @@ app.all("/api/auth/*", toNodeHandler(auth));
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/ai", ChatRouter);
 app.use("/api/v1/mood", MoodRoute);
+app.use("/api/v1/habit", HabitRoute);
+
 
 app.use(errorMiddleware);
 app.get("/", (req, res) => {
