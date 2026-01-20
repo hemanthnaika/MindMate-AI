@@ -68,7 +68,7 @@ const SignUp = () => {
               title="I agree to the MindMate Terms & Conditions"
               style="mt-5"
             />
-            <CustomButton title="Sign In" style="mt-3 w-full" />
+            <CustomButton title="Sign Up" style="mt-3 w-full" />
             <TouchableOpacity
               className="mt-3"
               onPress={() => router.push("/(auth)/sign-in")}

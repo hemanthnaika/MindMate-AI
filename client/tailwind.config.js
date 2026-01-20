@@ -6,16 +6,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#5144EA",
-        secondary: "#DDD9FF",
+        primary: "#6B5CFF",
+        secondary: "#2D144B",
         warning: "#FD824C",
         error: "#F62B2B",
         success: "#48B231",
 
         black: "#111113",
-        white: "#F6F7FF",
-        grey: "#686974",
-        lightGrey: "#9FA0A7",
+        white: "#ffffff",
+        card: "#25123F",
       },
       fontFamily: {
         "Inter-Regular": ["Inter-Regular", "sans-serif"],

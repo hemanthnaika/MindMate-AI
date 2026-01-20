@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { router } from "expo-router";
 
 export default function Index() {
-  const isAuthenticated = false;
+  const isAuthenticated = true;
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (isAuthenticated) {
