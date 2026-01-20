@@ -96,7 +96,7 @@ const Index = () => {
             </Text>
             <TouchableOpacity
               className="bg-primary  p-4 flex-row justify-center items-center gap-3 rounded-full mt-3"
-              onPress={() => router.push("/chat")}
+              onPress={() => router.push("/chatWithAi")}
             >
               <Text className="font-Inter-Bold text-white text-md">
                 Start a Chat
