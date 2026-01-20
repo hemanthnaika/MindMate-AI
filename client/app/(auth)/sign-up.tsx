@@ -15,7 +15,8 @@ import { Lock, Mail, User } from "lucide-react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
-const SignIn = () => {
+import Checkbox from "@/components/ui/Checkbox";
+const SignUp = () => {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-white px-5 mt-4">
       <KeyboardAvoidingView
@@ -31,11 +32,11 @@ const SignIn = () => {
           <View className="flex-1 items-center gap-4 px-3">
             <Image source={logo} className="w-40 h-w-40" resizeMode="contain" />
             <Text className="font-Poppins-ExtraBold text-3xl">
-              Welcome Back
+              Let’s Get Started!
             </Text>
             <Text className="font-Poppins-Medium text-center">
-              Sign in to continue your journey toward better habits and mental
-              wellness.
+              Create your account and begin your journey to better habits and
+              mental well-being.
             </Text>
             <TouchableOpacity className="flex-row items-center gap-5 bg-[#ffffff]  py-3 w-full rounded-full justify-center border border-lightGrey ">
               <Image
@@ -49,6 +50,11 @@ const SignIn = () => {
               or Continue with email
             </Text>
             <CustomInput
+              label="Name"
+              icon={User}
+              placeholder="Enter your name"
+            />
+            <CustomInput
               label="Email"
               icon={Mail}
               placeholder="Enter your email"
@@ -58,20 +64,18 @@ const SignIn = () => {
               icon={Lock}
               placeholder="Enter your password"
             />
-            <TouchableOpacity className="mt-5">
-              <Text className="font-Poppins-Bold text-right text-primary">
-                Forgot Password
-              </Text>
-            </TouchableOpacity>
-
-            <CustomButton title="Sign In" style="mt-5 w-full" />
+            <Checkbox
+              title="I agree to the MindMate Terms & Conditions"
+              style="mt-5"
+            />
+            <CustomButton title="Sign In" style="mt-3 w-full" />
             <TouchableOpacity
-              className="mt-8"
-              onPress={() => router.push("/(auth)/sign-up")}
+              className="mt-3"
+              onPress={() => router.push("/(auth)/sign-in")}
             >
               <Text className=" font-Poppins-Bold text-center">
-                Don’t have an account?
-                <Text className="text-primary"> Sign Up</Text>
+                Already have an account?
+                <Text className="text-primary"> Sign In</Text>
               </Text>
             </TouchableOpacity>
           </View>
@@ -81,4 +85,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
