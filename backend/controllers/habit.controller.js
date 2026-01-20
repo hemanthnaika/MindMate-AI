@@ -1,3 +1,4 @@
+import { getConsistency, getStreak } from "../lib/helperFunctions.js";
 import Habit from "../models/habit.model.js";
 export const addHabit = async (req, resizeBy, next) => {
   try {

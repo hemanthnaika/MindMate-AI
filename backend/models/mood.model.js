@@ -36,4 +36,5 @@ const moodSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+
 export default mongoose.model("Mood", moodSchema);
