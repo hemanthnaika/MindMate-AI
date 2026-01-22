@@ -15,8 +15,40 @@ import { Lock, Mail, User } from "lucide-react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import { useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { signUp } from "@/services/auth.services";
+import { toast } from "sonner-native";
 import Checkbox from "@/components/ui/Checkbox";
+
 const SignUp = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      name: "",
+    },
+  });
+  const mutation = useMutation({
+    mutationFn: signUp,
+    onSuccess: (data) => {
+      toast.success("Signed up successfully");
+      router.replace("/(tabs)");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Something went wrong");
+    },
+  });
+  const handleSignIn = (data: SignUpProps) => {
+    mutation.mutate(data);
+  };
+
+  const isDisabled = mutation.isPending;
+
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-white px-5 mt-4">
       <KeyboardAvoidingView
@@ -47,35 +79,108 @@ const SignUp = () => {
               <Text className="font-Poppins-Bold">Continue with Google</Text>
             </TouchableOpacity>
             <Text className="font-Poppins-ExtraBold text-center">
-              or Continue with email
+              or sign up with email
             </Text>
-            <CustomInput
-              label="Name"
-              icon={User}
-              placeholder="Enter your name"
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: "Name is required",
+                min: 3,
+              }}
+              render={({ field: { onChange, value } }) => (
+                <View className="px-5">
+                  <CustomInput
+                    label="Name"
+                    placeholder="Enter your name"
+                    onChangeText={onChange}
+                    value={value}
+                    icon={User}
+                    error={!!errors.name}
+                    editable={!isDisabled}
+                  />
+                  {errors.name && (
+                    <Text className="text-red-500 text-sm mt-1">
+                      {errors.name.message}
+                    </Text>
+                  )}
+                </View>
+              )}
             />
-            <CustomInput
-              label="Email"
-              icon={Mail}
-              placeholder="Enter your email"
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Enter a valid email",
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <View className="px-5">
+                  <CustomInput
+                    label="Email"
+                    placeholder="Enter your email"
+                    onChangeText={onChange}
+                    value={value}
+                    keyboardType="email-address"
+                    icon={Mail}
+                    error={!!errors.email}
+                    editable={!isDisabled}
+                  />
+                  {errors.email && (
+                    <Text className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </Text>
+                  )}
+                </View>
+              )}
             />
-            <CustomInput
-              label="Password"
-              icon={Lock}
-              placeholder="Enter your password"
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: "Password is required",
+              }}
+              render={({ field: { onChange, value } }) => (
+                <View className="px-5">
+                  <CustomInput
+                    label="Password"
+                    placeholder="Enter your password"
+                    onChangeText={onChange}
+                    value={value}
+                    secureTextEntry={true}
+                    icon={Lock}
+                    error={!!errors.password}
+                    editable={!isDisabled}
+                  />
+                  {errors.password && (
+                    <Text className="text-red-500 text-sm mt-1">
+                      {errors.password.message}
+                    </Text>
+                  )}
+                </View>
+              )}
             />
             <Checkbox
               title="I agree to the MindMate Terms & Conditions"
               style="mt-5"
             />
-            <CustomButton title="Sign Up" style="mt-3 w-full" />
+
+            <CustomButton
+              isLoading={mutation.isPending}
+              title="Sign In"
+              style="mt-2 w-full"
+              onPress={handleSubmit(handleSignIn)}
+            />
             <TouchableOpacity
               className="mt-3"
               onPress={() => router.push("/(auth)/sign-in")}
             >
-              <Text className=" font-Poppins-Bold text-center">
+              <Text className=" font-Poppins-Bold text-center text-md">
                 Already have an account?
-                <Text className="text-primary"> Sign In</Text>
+                <Text className="text-primary">Sign In</Text>
               </Text>
             </TouchableOpacity>
           </View>

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "mindMateAi",
+    "slug": "mindMateAi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/logo.png",
-    "scheme": "client",
+    "scheme": "mindMateAi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -39,7 +39,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -23,15 +23,18 @@ export const Chat = async (req, res, next) => {
     );
 
     // 🔹 Get previous chat
+    // 🔹 Get previous chat
     let previousChat = await ChatHistory.findOne({ userId: user.id });
 
-    // 🔹 Clean previous messages (REMOVE _id)
+    // 🔹 Take only last 5 messages
     let formattedMessages = [];
     if (previousChat?.messages?.length) {
-      formattedMessages = previousChat.messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
+      formattedMessages = previousChat.messages
+        .slice(-5) // ✅ ONLY LAST 5 MESSAGES
+        .map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        }));
     }
 
     // 🔹 System prompt
@@ -83,6 +86,21 @@ export const Chat = async (req, res, next) => {
     });
   } catch (error) {
     console.error(error);
+    next(error);
+  }
+};
+
+export const GetChatHistory = async (req, res, next) => {
+  try {
+    const user = req.session;
+    const history = await ChatHistory.findOne({ userId: user.id });
+
+    res.status(200).json({
+      success: true,
+      data: history?.messages || [],
+    });
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 };

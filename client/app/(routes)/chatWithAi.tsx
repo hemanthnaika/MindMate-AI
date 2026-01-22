@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,14 +7,106 @@ import {
   Platform,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "@/components/CustomHeader";
 import { router } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
+import { getChatHistory, sendMessage } from "@/services/chat.services";
+import Markdown from "react-native-markdown-display";
+
+const markdownStyles = StyleSheet.create({
+  body: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontFamily: "Inter-Medium",
+  },
+  strong: {
+    fontWeight: "700",
+  },
+  bullet_list: {
+    marginVertical: 6,
+  },
+  list_item: {
+    marginVertical: 4,
+  },
+  paragraph: {
+    marginBottom: 8,
+  },
+});
 
 const ChatWithAi = () => {
+  const [messages, setMessages] = useState<
+    { id: string; text: string; ai: boolean }[]
+  >([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const flatListRef = useRef<FlatList>(null);
+
+  // Load previous chat history
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const history = await getChatHistory();
+
+        // Convert history to UI format
+        const formatted = history.map((msg: any, index: number) => ({
+          id: index.toString(),
+          text: msg.content,
+          ai: msg.role === "assistant",
+        }));
+
+        setMessages(formatted);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      text: input,
+      ai: false,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const aiReply = await sendMessage(input);
+
+      const aiMessage = {
+        id: Date.now().toString() + "-ai",
+        text: aiReply,
+        ai: true,
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-secondary">
       <KeyboardAvoidingView
@@ -25,10 +118,8 @@ const ChatWithAi = () => {
         </View>
 
         <FlatList
-          data={[
-            { id: "1", text: "Hi Alex, how are you feeling today?", ai: true },
-            { id: "2", text: "I feel a bit stressed.", ai: false },
-          ]}
+          ref={flatListRef}
+          data={messages}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -40,16 +131,16 @@ const ChatWithAi = () => {
           renderItem={({ item }) => (
             <View
               className={`mb-3 max-w-[80%] px-4 py-3 rounded-2xl ${
-                item.ai ? "bg-[#F3F1FF] self-start" : "bg-primary self-end"
+                item.ai ? "bg-white self-start" : "bg-primary self-end"
               }`}
             >
-              <Text
-                className={`text-base ${
-                  item.ai ? "text-gray-800" : "text-white"
-                }`}
-              >
-                {item.text}
-              </Text>
+              {item.ai ? (
+                <Markdown style={markdownStyles}>{item.text}</Markdown>
+              ) : (
+                <Text className="font-Poppins-Medium text-white">
+                  {item.text}
+                </Text>
+              )}
             </View>
           )}
         />
@@ -67,7 +158,9 @@ const ChatWithAi = () => {
           }}
         >
           <TextInput
-                placeholder="Type how you’re feeling…"
+            value={input}
+            onChangeText={setInput}
+            placeholder="Type how you’re feeling…"
             style={{
               flex: 1,
               backgroundColor: "#f1f5f9",
@@ -78,13 +171,20 @@ const ChatWithAi = () => {
           />
 
           <TouchableOpacity
+            disabled={loading}
+            onPress={handleSend}
             style={{
               backgroundColor: "#4f46e5",
               padding: 12,
               borderRadius: 999,
+              opacity: loading ? 0.6 : 1,
             }}
           >
-            <Feather name="send" color={"#ffffff"} size={20} />
+            {loading ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <Feather name="send" color={"#ffffff"} size={20} />
+            )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

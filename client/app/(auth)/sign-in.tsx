@@ -11,11 +11,45 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { google, logo } from "@/assets/icons";
 import CustomInput from "@/components/CustomInput";
-import { Lock, Mail, User } from "lucide-react-native";
+import { Lock, Mail } from "lucide-react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import { useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { signIn } from "@/services/auth.services";
+import { toast } from "sonner-native";
+
 const SignIn = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const mutation = useMutation({
+    mutationFn: signIn,
+    onSuccess: () => {
+      toast.success("Logged in successfully");
+      router.replace("/(tabs)");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.message || error?.error?.message || "Something went wrong";
+
+      toast.error(message);
+    },
+  });
+  const handleSignIn = (data: SignInProps) => {
+    mutation.mutate(data);
+  };
+
+  const isDisabled = mutation.isPending;
+
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-white px-5 mt-4">
       <KeyboardAvoidingView
@@ -48,15 +82,61 @@ const SignIn = () => {
             <Text className="font-Poppins-ExtraBold text-center">
               or Continue with email
             </Text>
-            <CustomInput
-              label="Email"
-              icon={Mail}
-              placeholder="Enter your email"
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Enter a valid email",
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <View className="px-5">
+                  <CustomInput
+                    label="Email"
+                    placeholder="Enter your email"
+                    onChangeText={onChange}
+                    value={value}
+                    keyboardType="email-address"
+                    icon={Mail}
+                    error={!!errors.email}
+                    editable={!isDisabled}
+                  />
+                  {errors.email && (
+                    <Text className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </Text>
+                  )}
+                </View>
+              )}
             />
-            <CustomInput
-              label="Password"
-              icon={Lock}
-              placeholder="Enter your password"
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: "Password is required",
+              }}
+              render={({ field: { onChange, value } }) => (
+                <View className="px-5">
+                  <CustomInput
+                    label="Password"
+                    placeholder="Enter your password"
+                    onChangeText={onChange}
+                    value={value}
+                    secureTextEntry={true}
+                    icon={Lock}
+                    error={!!errors.password}
+                    editable={!isDisabled}
+                  />
+                  {errors.password && (
+                    <Text className="text-red-500 text-sm mt-1">
+                      {errors.password.message}
+                    </Text>
+                  )}
+                </View>
+              )}
             />
             <TouchableOpacity className="mt-5">
               <Text className="font-Poppins-Bold text-right text-primary">
@@ -64,7 +144,12 @@ const SignIn = () => {
               </Text>
             </TouchableOpacity>
 
-            <CustomButton title="Sign In" style="mt-5 w-full" />
+            <CustomButton
+              isLoading={mutation.isPending}
+              title="Sign In"
+              style="mt-5 w-full"
+              onPress={handleSubmit(handleSignIn)}
+            />
             <TouchableOpacity
               className="mt-8"
               onPress={() => router.push("/(auth)/sign-up")}

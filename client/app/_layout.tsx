@@ -2,8 +2,10 @@ import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner-native";
 export default function RootLayout() {
+  const queryClient = new QueryClient();
   const [fontsLoaded, error] = useFonts({
     "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
     "Inter-Medium": require("../assets/fonts/Inter-Medium.ttf"),
@@ -23,8 +25,11 @@ export default function RootLayout() {
     Prepare();
   }, [fontsLoaded, error]);
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }} />
+    <GestureHandlerRootView className="flex-1">
+      <QueryClientProvider client={queryClient}>
+        <Stack screenOptions={{ headerShown: false }} />
+        <Toaster position="bottom-center" theme="light" />
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

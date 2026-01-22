@@ -14,6 +14,7 @@ import cn from "clsx";
 import CustomButton from "@/components/CustomButton";
 import HabitCard from "@/components/HabitCard";
 import { router } from "expo-router";
+import { authClient } from "@/lib/auth-client";
 
 const MoodCard = ({
   icon,
@@ -29,7 +30,18 @@ const MoodCard = ({
   </TouchableOpacity>
 );
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 12) return "Good Morning";
+  if (hour >= 12 && hour < 17) return "Good Afternoon";
+  if (hour >= 17 && hour < 21) return "Good Evening";
+  return "Good Night";
+};
+
 const Index = () => {
+  const { data: session } = authClient.useSession();
+  const greeting = getGreeting();
   return (
     <SafeAreaView edges={["top"]} className="px-5   flex-1 bg-secondary">
       <StatusBar barStyle="dark-content" hidden />
@@ -37,7 +49,7 @@ const Index = () => {
         <View className="flex-row items-center justify-between">
           <View className="bg-primary p-1 rounded-full">
             <Image
-              source={profile}
+              source={session?.user.image || profile}
               resizeMode="contain"
               className="w-10 h-10"
             />
@@ -47,7 +59,10 @@ const Index = () => {
         </View>
         <View className="mt-10">
           <Text className="font-Poppins-ExtraBold text-3xl text-white">
-            👋 Good Morning, Alex
+            👋 {greeting},
+          </Text>
+          <Text className="font-Poppins-ExtraBold text-4xl text-white ml-10 mt-2">
+            {session?.user.name}
           </Text>
         </View>
         <View

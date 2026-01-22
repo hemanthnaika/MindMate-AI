@@ -1,23 +1,26 @@
 import { Image, ImageBackground, Text, View } from "react-native";
 import "./global.css";
 import { splashBg, splashHero } from "@/assets/icons";
-import CustomButton from "@/components/CustomButton";
-import { ArrowRight } from "lucide-react-native";
+
 import { useEffect } from "react";
 import { router } from "expo-router";
+import { authClient } from "@/lib/auth-client";
 
 export default function Index() {
-  const isAuthenticated = true;
+  const { data: session, isPending } = authClient.useSession();
+  console.log(session);
   useEffect(() => {
+    if (isPending) return;
+
     const timeout = setTimeout(() => {
-      if (isAuthenticated) {
+      if (session?.user) {
         router.replace("/(tabs)");
       } else {
         router.replace("/(auth)");
       }
     }, 1500);
     return () => clearTimeout(timeout);
-  }, [isAuthenticated]);
+  }, [session, isPending]);
   return (
     <ImageBackground
       source={splashBg}

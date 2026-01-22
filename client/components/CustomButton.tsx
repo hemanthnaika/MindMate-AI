@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { LucideIcon } from "lucide-react-native";
 import cn from "clsx";
@@ -8,6 +8,7 @@ type Props = {
   icon?: LucideIcon;
   onPress?: () => void;
   style?: string;
+  isLoading?: boolean;
 };
 
 const CustomButton = ({
@@ -15,6 +16,7 @@ const CustomButton = ({
   icon: Icon,
   onPress,
   style,
+  isLoading = false,
 }: Props) => {
   return (
     <TouchableOpacity
@@ -24,9 +26,19 @@ const CustomButton = ({
       )}
       onPress={onPress}
     >
-      <Text className="text-white font-Poppins-Bold text-xl">{title}</Text>
-      {Icon && (
-        <Icon size={20} color="white" className="font-Poppins-Bold text-2xl" />
+      {isLoading ? (
+        <ActivityIndicator size={"small"} color={"white"} />
+      ) : (
+        <>
+          <Text className="text-white font-Poppins-Bold text-xl">{title}</Text>
+          {Icon && (
+            <Icon
+              size={20}
+              color="white"
+              className="font-Poppins-Bold text-2xl"
+            />
+          )}
+        </>
       )}
     </TouchableOpacity>
   );
