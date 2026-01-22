@@ -1,5 +1,6 @@
 // lib/chat.ts
 import { api } from "@/lib/api.config";
+import { handleApiError } from "@/utils/handleApiError";
 
 export const getChatHistory = async () => {
   try {
@@ -7,20 +8,8 @@ export const getChatHistory = async () => {
     return res.data.data;
   } catch (err: any) {
     if (err?.error) {
-      throw new Error(
-        err.error.message || err.error.code || "Authentication failed"
-      );
+      throw handleApiError(err);
     }
-
-    if (err.response) {
-      throw new Error(err.response.data?.message || "Request failed");
-    }
-
-    if (err.request) {
-      throw new Error("Network error. Please check your internet connection.");
-    }
-
-    throw new Error(err.message || "Something went wrong");
   }
 };
 
@@ -29,20 +18,6 @@ export const sendMessage = async (message: string) => {
     const res = await api.post("/v1/ai/chat", { message });
     return res.data.data;
   } catch (err: any) {
-    if (err?.error) {
-      throw new Error(
-        err.error.message || err.error.code || "Authentication failed"
-      );
-    }
-
-    if (err.response) {
-      throw new Error(err.response.data?.message || "Request failed");
-    }
-
-    if (err.request) {
-      throw new Error("Network error. Please check your internet connection.");
-    }
-
-    throw new Error(err.message || "Something went wrong");
+    throw handleApiError(err);
   }
 };

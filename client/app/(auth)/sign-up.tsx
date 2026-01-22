@@ -7,7 +7,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { google, logo } from "@/assets/icons";
 import CustomInput from "@/components/CustomInput";
@@ -33,6 +33,10 @@ const SignUp = () => {
       name: "",
     },
   });
+
+  const [accepted, setAccepted] = useState(false);
+  const [acceptError, setAcceptError] = useState(false);
+
   const mutation = useMutation({
     mutationFn: signUp,
     onSuccess: (data) => {
@@ -44,6 +48,10 @@ const SignUp = () => {
     },
   });
   const handleSignIn = (data: SignUpProps) => {
+    if (!accepted) {
+      setAcceptError(true);
+      return;
+    }
     mutation.mutate(data);
   };
 
@@ -163,10 +171,25 @@ const SignUp = () => {
                 </View>
               )}
             />
-            <Checkbox
-              title="I agree to the MindMate Terms & Conditions"
-              style="mt-5"
-            />
+            <View className="mt-5 flex-row items-center gap-3 px-5">
+              <Checkbox
+                checked={accepted}
+                onToggle={(value) => {
+                  setAccepted(value);
+                  if (value) setAcceptError(false);
+                }}
+                checkStyle="w-6 h-6"
+              />
+              <Text className="text-sm font-Poppins-Medium">
+                I agree to the Terms & Conditions
+              </Text>
+            </View>
+
+            {acceptError && (
+              <Text className="text-red-500 text-sm mt-1 px-5">
+                Please accept the terms to continue
+              </Text>
+            )}
 
             <CustomButton
               isLoading={mutation.isPending}

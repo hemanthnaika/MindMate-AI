@@ -8,7 +8,7 @@ import { authClient } from "@/lib/auth-client";
 
 export default function Index() {
   const { data: session, isPending } = authClient.useSession();
-  console.log(session);
+
   useEffect(() => {
     if (isPending) return;
 

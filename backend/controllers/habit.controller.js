@@ -1,6 +1,6 @@
 import { getConsistency, getStreak } from "../lib/helperFunctions.js";
 import Habit from "../models/habit.model.js";
-export const addHabit = async (req, resizeBy, next) => {
+export const addHabit = async (req, res, next) => {
   try {
     const user = req.session;
     const { habitName } = req.body;
@@ -81,26 +81,44 @@ export const markHabit = async (req, res, next) => {
   }
 };
 
-export const getHabits = async (req, re, next) => {
+export const getHabits = async (req, res, next) => {
   try {
     const user = req.session;
+
     const userHabits = await Habit.findOne({ userId: user.id });
 
+    // Return empty array instead of error (important for UI)
     if (!userHabits) {
-      const error = new Error("No habits found");
-      error.status = 404;
-      throw error;
+      return res.status(200).json({
+        success: true,
+        habits: [],
+      });
     }
 
-    const habits = userHabits.habits.map((habit) => ({
-      name: habit.name,
-      streak: getStreak(habit.progress),
-      consistency: getConsistency(habit.progress),
-    }));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    res.status(200).json({ success: true, habits });
+    const habits = userHabits.habits.map((habit) => {
+      const todayProgress = habit.progress.find((p) => {
+        const d = new Date(p.date);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime() === today.getTime();
+      });
+
+      return {
+        name: habit.name,
+        completed: todayProgress?.completed ?? false,
+        streak: getStreak(habit.progress),
+        consistency: getConsistency(habit.progress),
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      habits,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     next(error);
   }
 };

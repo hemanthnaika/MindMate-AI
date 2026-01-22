@@ -8,3 +8,8 @@ interface SignUpProps {
   email: string;
   password: string;
 }
+
+interface MarkHabit {
+  habitName: string;
+  completed: boolean;
+}
