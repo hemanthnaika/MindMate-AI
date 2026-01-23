@@ -8,7 +8,7 @@ const client = new MongoClient(DB_URL);
 const db = client.db();
 
 export const auth = betterAuth({
-  trustedOrigins: ["minMateAi://", process.env.CLIENT_URL],
+  trustedOrigins: ["mindmateai://", process.env.CLIENT_URL],
   plugins: [expo()],
   database: mongodbAdapter(db, {
     client,

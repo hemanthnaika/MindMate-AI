@@ -19,6 +19,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { signIn } from "@/services/auth.services";
 import { toast } from "sonner-native";
+import { authClient } from "@/lib/auth-client";
 
 const SignIn = () => {
   const {
@@ -48,6 +49,25 @@ const SignIn = () => {
     mutation.mutate(data);
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/(tabs)",
+      });
+      return {
+        success: true,
+        message: "Google Sign-in successful!",
+      };
+    } catch (error) {
+      const e = error as Error;
+      return {
+        success: false,
+        message: e?.message || "Google Sign-in failed",
+      };
+    }
+  };
+
   const isDisabled = mutation.isPending;
 
   return (
@@ -71,7 +91,10 @@ const SignIn = () => {
               Sign in to continue your journey toward better habits and mental
               wellness.
             </Text>
-            <TouchableOpacity className="flex-row items-center gap-5 bg-[#ffffff]  py-3 w-full rounded-full justify-center border border-lightGrey ">
+            <TouchableOpacity
+              className="flex-row items-center gap-5 bg-[#ffffff]  py-3 w-full rounded-full justify-center border border-lightGrey "
+              onPress={signInWithGoogle}
+            >
               <Image
                 source={google}
                 className="w-10 h-10"
