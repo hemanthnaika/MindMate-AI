@@ -3,8 +3,8 @@ import { handleApiError } from "@/utils/handleApiError";
 
 export const getHabits = async () => {
   try {
-    const res = api.get("/v1/habit/get-habits");
-    return (await res).data;
+    const res = await api.get("/v1/habit/get-habits");
+    return res.data;
   } catch (err) {
     throw handleApiError(err);
   }

@@ -13,3 +13,8 @@ interface MarkHabit {
   habitName: string;
   completed: boolean;
 }
+interface MoodProps {
+  mood: number;
+  stress: number;
+  sleep: number;
+}

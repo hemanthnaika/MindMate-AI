@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ai, logo, profile } from "@/assets/icons";
 import { ArrowRight, Bell, Plus } from "lucide-react-native";
@@ -16,19 +16,25 @@ import cn from "clsx";
 import HabitCard from "@/components/HabitCard";
 import { router } from "expo-router";
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getHabits } from "@/services/habits.services";
+import { moodIcons, sleepIcons, stressIcons } from "@/constants";
+import { addMood, getMood } from "@/services/mood.services";
+import { toast } from "sonner-native";
 
-const MoodCard = ({
+const Card = ({
   icon,
   onPress,
-  mood = false,
+  active = false,
 }: {
   icon: string;
   onPress?: () => void;
-  mood?: boolean;
+  active?: boolean;
 }) => (
-  <TouchableOpacity className={cn(mood && "bg-primary p-2 rounded-full")}>
+  <TouchableOpacity
+    className={cn(active && "bg-primary p-2 rounded-full")}
+    onPress={onPress}
+  >
     <Text className="text-4xl font-Poppins-Medium">{icon}</Text>
   </TouchableOpacity>
 );
@@ -44,6 +50,8 @@ const getGreeting = () => {
 
 const Index = () => {
   const { data: session } = authClient.useSession();
+  const queryClient = useQueryClient();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["habits"],
     queryFn: getHabits,
@@ -51,6 +59,9 @@ const Index = () => {
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
+  const [mood, setMood] = useState<number>(1);
+  const [sleep, setSleep] = useState<number>(1);
+  const [stress, setStress] = useState<number>(1);
 
   const habits = data?.habits || [];
 
@@ -60,6 +71,43 @@ const Index = () => {
   // first 5
   const firstFive = incompleteHabits.slice(0, 5);
   const greeting = getGreeting();
+
+  const mutation = useMutation({
+    mutationFn: addMood,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["mood"] });
+    },
+    onError: (error: any) => {
+      const message =
+        error?.message || error?.error?.message || "Something went wrong";
+
+      toast.error(message);
+    },
+  });
+
+  const { data: moodData } = useQuery({
+    queryKey: ["mood"],
+    queryFn: getMood,
+  });
+
+  const handleAddMood = () => {
+    if (mood === null || sleep === null || stress === null) {
+      toast.error("Please select mood, sleep, and stress");
+      return;
+    }
+
+    mutation.mutate({ mood, sleep, stress });
+  };
+
+  useEffect(() => {
+    if (!moodData?.data) return;
+
+    setMood(moodData.data.mood);
+    setSleep(moodData.data.sleep);
+    setStress(moodData.data.stress);
+  }, [moodData]);
+
   return (
     <SafeAreaView edges={["top"]} className="px-5   flex-1 bg-secondary">
       <StatusBar barStyle="dark-content" hidden />
@@ -115,14 +163,97 @@ const Index = () => {
                   elevation: 4,
                 }}
               >
-                <MoodCard icon="😞" mood />
-                <MoodCard icon="😕" />
-                <MoodCard icon="😕" />
-                <MoodCard icon="🙂" />
-                <MoodCard icon="😄" />
+                {moodIcons.map((icon, index) => {
+                  const value = index + 1;
+
+                  return (
+                    <Card
+                      key={index}
+                      icon={icon}
+                      active={mood === value}
+                      onPress={() => setMood(value)}
+                    />
+                  );
+                })}
               </View>
             </View>
 
+            <View
+              className="p-5 mt-5 rounded-md bg-card"
+              style={{
+                elevation: 0.5,
+              }}
+            >
+              <Text className="font-Inter-Medium text-lg text-white">
+                How was your sleep?
+              </Text>
+              <View
+                className="flex-row items-center justify-between gap-5 mt-3"
+                style={{
+                  shadowColor: "#DDD9FF",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 10,
+                  elevation: 4,
+                }}
+              >
+                {sleepIcons.map((icon, index) => {
+                  const value = index + 1;
+
+                  return (
+                    <Card
+                      key={index}
+                      icon={icon}
+                      active={sleep === value}
+                      onPress={() => setSleep(value)}
+                    />
+                  );
+                })}
+              </View>
+            </View>
+
+            <View
+              className="p-5 mt-5 rounded-md bg-card"
+              style={{
+                elevation: 0.5,
+              }}
+            >
+              <Text className="font-Inter-Medium text-lg text-white">
+                How stressed are you today?
+              </Text>
+              <View
+                className="flex-row items-center justify-between gap-5 mt-3"
+                style={{
+                  shadowColor: "#DDD9FF",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 10,
+                  elevation: 4,
+                }}
+              >
+                {stressIcons.map((icon, index) => {
+                  const value = index + 1;
+
+                  return (
+                    <Card
+                      key={index}
+                      icon={icon}
+                      active={stress === value}
+                      onPress={() => setStress(value)}
+                    />
+                  );
+                })}
+              </View>
+            </View>
+            <TouchableOpacity
+              disabled={mutation.isPending}
+              className="bg-primary p-4 rounded-full mt-5"
+              onPress={handleAddMood}
+            >
+              <Text className="text-white text-center font-Inter-Bold">
+                Save Today’s Mood
+              </Text>
+            </TouchableOpacity>
             <View
               className="bg-card mt-10 p-5 rounded-md flex-row items-center "
               style={{

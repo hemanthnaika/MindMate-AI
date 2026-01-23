@@ -186,7 +186,7 @@ const SignUp = () => {
             </View>
 
             {acceptError && (
-              <Text className="text-red-500 text-sm mt-1 px-5">
+              <Text className="text-red-500 text-sm mt-1 px-5 font-Inter-Bold ">
                 Please accept the terms to continue
               </Text>
             )}

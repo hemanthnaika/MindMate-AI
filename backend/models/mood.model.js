@@ -23,9 +23,7 @@ const moodSchema = new mongoose.Schema(
           min: 1,
           max: 5,
         },
-        note: {
-          type: String,
-        },
+
         date: {
           type: Date,
           default: Date.now,
@@ -35,6 +33,5 @@ const moodSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 export default mongoose.model("Mood", moodSchema);

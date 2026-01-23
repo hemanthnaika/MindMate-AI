@@ -64,7 +64,7 @@ const Habits = () => {
               <TextInput
                 value={habitName}
                 onChangeText={setHabitName}
-                placeholder="Enter your habit"
+                placeholder="What habit do you want to build?"
                 className="flex-1 px-4 py-3 text-base font-Inter-Medium"
                 placeholderTextColor="#9ca3af"
               />
@@ -75,7 +75,13 @@ const Habits = () => {
                 <PlusCircle size={20} color="#fff" />
               </TouchableOpacity>
             </View>
-
+            {habits?.length > 0 && (
+              <View className="mt-3 px-1">
+                <Text className="text-lg text-gray-500 font-Inter-Medium mt-5">
+                  ✔️ Tap the checkbox to mark a habit as completed for today
+                </Text>
+              </View>
+            )}
             {/* Content */}
             <View className="mt-8 flex-1">
               {isLoading && (
