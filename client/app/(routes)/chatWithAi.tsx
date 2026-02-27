@@ -107,8 +107,6 @@ const ChatWithAi = () => {
     }
   };
 
-  
-
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-secondary">
       <KeyboardAvoidingView
@@ -125,6 +123,16 @@ const ChatWithAi = () => {
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={
+            <View className="mt-24 items-center px-6">
+              <Text className="text-xl font-Poppins-Bold text-white">
+                Talk to MindMate 💙
+              </Text>
+              <Text className="text-gray-400 mt-2 text-center font-Inter-Medium">
+                A safe place to share your thoughts.
+              </Text>
+            </View>
+          }
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingTop: 20,
@@ -167,9 +175,10 @@ const ChatWithAi = () => {
               flex: 1,
               backgroundColor: "#f1f5f9",
               paddingHorizontal: 16,
-              paddingVertical: 12,
-              borderRadius: 999,
+              paddingVertical: 20,
+              borderRadius: 12,
             }}
+            multiline
           />
 
           <TouchableOpacity

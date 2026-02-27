@@ -1,25 +1,24 @@
+import { logo } from "@/assets/icons";
+import CustomButton from "@/components/CustomButton";
+import CustomInput from "@/components/CustomInput";
+import { signIn } from "@/services/auth.services";
+import Feather from "@expo/vector-icons/Feather";
+import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { Lock, Mail } from "lucide-react-native";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
-  View,
-  Text,
   Image,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { google, logo } from "@/assets/icons";
-import CustomInput from "@/components/CustomInput";
-import { Lock, Mail } from "lucide-react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { router } from "expo-router";
-import CustomButton from "@/components/CustomButton";
-import { useMutation } from "@tanstack/react-query";
-import { Controller, useForm } from "react-hook-form";
-import { signIn } from "@/services/auth.services";
 import { toast } from "sonner-native";
-import { authClient } from "@/lib/auth-client";
 
 const SignIn = () => {
   const {
@@ -49,25 +48,6 @@ const SignIn = () => {
     mutation.mutate(data);
   };
 
-  const signInWithGoogle = async () => {
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/(tabs)",
-      });
-      return {
-        success: true,
-        message: "Google Sign-in successful!",
-      };
-    } catch (error) {
-      const e = error as Error;
-      return {
-        success: false,
-        message: e?.message || "Google Sign-in failed",
-      };
-    }
-  };
-
   const isDisabled = mutation.isPending;
 
   return (
@@ -90,20 +70,6 @@ const SignIn = () => {
             <Text className="font-Poppins-Medium text-center">
               Sign in to continue your journey toward better habits and mental
               wellness.
-            </Text>
-            <TouchableOpacity
-              className="flex-row items-center gap-5 bg-[#ffffff]  py-3 w-full rounded-full justify-center border border-lightGrey "
-              onPress={signInWithGoogle}
-            >
-              <Image
-                source={google}
-                className="w-10 h-10"
-                resizeMode="contain"
-              />
-              <Text className="font-Poppins-Bold">Continue with Google</Text>
-            </TouchableOpacity>
-            <Text className="font-Poppins-ExtraBold text-center">
-              or Continue with email
             </Text>
             <Controller
               name="email"

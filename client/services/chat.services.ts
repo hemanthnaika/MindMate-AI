@@ -21,3 +21,12 @@ export const sendMessage = async (message: string) => {
     throw handleApiError(err);
   }
 };
+
+export const deleteAllChats = async () => {
+  try {
+    const res = await api.delete("/v1/ai/deleteChatHistory");
+    return res.data.data;
+  } catch (err: any) {
+    throw handleApiError(err);
+  }
+};

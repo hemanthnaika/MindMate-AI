@@ -19,7 +19,7 @@ export const Chat = async (req, res, next) => {
 
     // 🔹 Detect danger words
     const isDanger = dangerWords.some((word) =>
-      message.toLowerCase().includes(word)
+      message.toLowerCase().includes(word),
     );
 
     // 🔹 Get previous chat
@@ -75,7 +75,7 @@ export const Chat = async (req, res, next) => {
       {
         upsert: true,
         new: true,
-      }
+      },
     );
 
     // 🔹 Response
@@ -101,6 +101,31 @@ export const GetChatHistory = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const DeleteChatHistory = async (req, res, next) => {
+  try {
+    const user = req.session;
+
+    if (!user?.id) {
+      const error = new Error("Unauthorized");
+      error.status = 401;
+      throw error;
+    }
+
+    await ChatHistory.findOneAndUpdate(
+      { userId: user.id },
+      { $set: { messages: [] } },
+      { new: true },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Chat history deleted successfully",
+    });
+  } catch (error) {
     next(error);
   }
 };
