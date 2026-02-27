@@ -29,7 +29,7 @@ const HabitCard = ({ habit }: { habit: any }) => {
     },
   });
 
-  // 🔹 UPDATE: added loading + error handling (NO logic changed)
+  // 🔹 UPDATE mutation (UNCHANGED LOGIC)
   const updateMutation = useMutation({
     mutationFn: updateHabit,
     onSuccess() {
@@ -42,7 +42,7 @@ const HabitCard = ({ habit }: { habit: any }) => {
     },
   });
 
-  // 🔹 DELETE: added error handling only
+  // 🔹 DELETE mutation (UNCHANGED LOGIC)
   const deleteMutation = useMutation({
     mutationFn: deleteHabit,
     onSuccess() {
@@ -61,49 +61,61 @@ const HabitCard = ({ habit }: { habit: any }) => {
 
   return (
     <>
-      {/* ================= EXISTING UI ================= */}
-      <View className="bg-primary/10 p-4 rounded-2xl mb-4 border border-white/10">
+      {/* ================= HABIT CARD ================= */}
+      <View className="bg-card rounded-2xl p-5 border border-white/10 shadow mb-4">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4 flex-1">
             <Checkbox
               checked={habit.completed}
               onToggle={handleToggle}
-              checkStyle="w-9 h-9"
+              checkStyle="w-10 h-10"
             />
 
-            <Text className="font-Inter-SemiBold text-xl text-white">
-              {habit?.name}
-            </Text>
+            <View className="flex-1">
+              <Text
+                className={`font-Inter-SemiBold text-lg ${
+                  habit.completed ? "text-gray-400 line-through" : "text-white"
+                }`}
+              >
+                {habit?.name}
+              </Text>
+
+              <Text className="text-xs text-gray-400 mt-1">
+                {habit.completed ? "Completed today 🎉" : "Keep going 💪"}
+              </Text>
+            </View>
           </View>
 
           <View className="flex-row items-center gap-4">
             <Pressable onPress={() => setEditOpen(true)}>
-              <Pencil size={20} color="#fff" />
+              <Pencil size={18} color="#a78bfa" />
             </Pressable>
 
             <Pressable onPress={() => setDeleteOpen(true)}>
-              <Trash2 size={20} color="#ff4d4f" />
+              <Trash2 size={18} color="#ef4444" />
             </Pressable>
           </View>
         </View>
 
+        {/* Stats */}
         <View className="flex-row justify-between mt-4">
-          <Text className="text-sm text-gray-300">
-            Streak:{" "}
+          <Text className="text-sm text-gray-400">
+            🔥 Streak:{" "}
             <Text className="text-white font-Inter-Medium">
               {habit?.streak} days
             </Text>
           </Text>
 
-          <Text className="text-sm text-gray-300">
-            Consistency:{" "}
+          <Text className="text-sm text-gray-400">
+            🎯 Consistency:{" "}
             <Text className="text-white font-Inter-Medium">
               {habit?.consistency}%
             </Text>
           </Text>
         </View>
 
-        <View className="h-2 bg-white/20 rounded-full mt-3 overflow-hidden">
+        {/* Progress bar */}
+        <View className="h-2 bg-white/10 rounded-full mt-3 overflow-hidden">
           <View
             className="h-full bg-primary rounded-full"
             style={{ width: `${habit?.consistency}%` }}
@@ -114,15 +126,15 @@ const HabitCard = ({ habit }: { habit: any }) => {
       {/* ================= UPDATE MODAL ================= */}
       <Modal transparent visible={editOpen} animationType="slide">
         <Pressable
-          className="flex-1 bg-black/50 justify-end"
+          className="flex-1 bg-black/60 justify-end"
           onPress={() => setEditOpen(false)}
         >
           <Pressable
-            className="bg-[#121212] p-6 rounded-t-3xl"
+            className="bg-card p-6 rounded-t-3xl"
             onPress={(e) => e.stopPropagation()}
           >
             <Text className="text-white text-xl mb-4 font-Inter-SemiBold">
-              Update Habit
+              Rename Habit
             </Text>
 
             <TextInput
@@ -130,7 +142,7 @@ const HabitCard = ({ habit }: { habit: any }) => {
               onChangeText={setNewName}
               className="bg-white/10 text-white p-4 rounded-xl mb-4"
               placeholder="Habit name"
-              placeholderTextColor="#888"
+              placeholderTextColor="#9ca3af"
             />
 
             <Pressable
@@ -146,7 +158,7 @@ const HabitCard = ({ habit }: { habit: any }) => {
               }
             >
               <Text className="text-white text-center font-Inter-SemiBold">
-                {updateMutation.isPending ? "Updating..." : "Update"}
+                {updateMutation.isPending ? "Updating..." : "Save Changes"}
               </Text>
             </Pressable>
           </Pressable>
@@ -156,19 +168,19 @@ const HabitCard = ({ habit }: { habit: any }) => {
       {/* ================= DELETE MODAL ================= */}
       <Modal transparent visible={deleteOpen} animationType="fade">
         <Pressable
-          className="flex-1 bg-black/50 justify-center px-6"
+          className="flex-1 bg-black/60 justify-center px-6"
           onPress={() => setDeleteOpen(false)}
         >
           <Pressable
-            className="bg-[#121212] p-6 rounded-2xl"
+            className="bg-card p-6 rounded-2xl"
             onPress={(e) => e.stopPropagation()}
           >
             <Text className="text-white text-lg mb-3 font-Inter-SemiBold">
               Delete Habit?
             </Text>
 
-            <Text className="text-gray-300 mb-6">
-              Are you sure you want to delete this habit?
+            <Text className="text-gray-400 mb-6">
+              This habit and its progress will be permanently removed.
             </Text>
 
             <View className="flex-row gap-4">

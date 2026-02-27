@@ -1,25 +1,24 @@
-import {
-  View,
-  Text,
-  StatusBar,
-  
-  Image,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { ai, logo, profile } from "@/assets/icons";
-import { ArrowRight, Bell, Plus } from "lucide-react-native";
 import cn from "clsx";
+import { ArrowRight, Bell, Plus } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+  FlatList,
+  Image,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import HabitCard from "@/components/HabitCard";
-import { router } from "expo-router";
-import { authClient } from "@/lib/auth-client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getHabits } from "@/services/habits.services";
 import { moodIcons, sleepIcons, stressIcons } from "@/constants";
+import { authClient } from "@/lib/auth-client";
+import { getHabits } from "@/services/habits.services";
 import { addMood, getMood } from "@/services/mood.services";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { toast } from "sonner-native";
 
 const Card = ({
@@ -32,16 +31,18 @@ const Card = ({
   active?: boolean;
 }) => (
   <TouchableOpacity
-    className={cn(active && "bg-primary p-2 rounded-full")}
+    className={cn(
+      "w-14 h-14 rounded-full items-center justify-center",
+      active ? "bg-primary" : "bg-secondary/40",
+    )}
     onPress={onPress}
   >
-    <Text className="text-4xl font-Poppins-Medium">{icon}</Text>
+    <Text className="text-3xl">{icon}</Text>
   </TouchableOpacity>
 );
 
 const getGreeting = () => {
   const hour = new Date().getHours();
-
   if (hour >= 5 && hour < 12) return "Good Morning";
   if (hour >= 12 && hour < 17) return "Good Afternoon";
   if (hour >= 17 && hour < 21) return "Good Evening";
@@ -55,20 +56,14 @@ const Index = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["habits"],
     queryFn: getHabits,
-    retry: 2,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
   });
-  const [mood, setMood] = useState<number>(1);
-  const [sleep, setSleep] = useState<number>(1);
-  const [stress, setStress] = useState<number>(1);
+
+  const [mood, setMood] = useState(1);
+  const [sleep, setSleep] = useState(1);
+  const [stress, setStress] = useState(1);
 
   const habits = data?.habits || [];
-
-  // only uncompleted
   const incompleteHabits = habits.filter((h: any) => !h.completed);
-
-  // first 5
   const firstFive = incompleteHabits.slice(0, 5);
   const greeting = getGreeting();
 
@@ -78,12 +73,7 @@ const Index = () => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["mood"] });
     },
-    onError: (error: any) => {
-      const message =
-        error?.message || error?.error?.message || "Something went wrong";
-
-      toast.error(message);
-    },
+    onError: () => toast.error("Something went wrong"),
   });
 
   const { data: moodData } = useQuery({
@@ -92,212 +82,150 @@ const Index = () => {
   });
 
   const handleAddMood = () => {
-    if (mood === null || sleep === null || stress === null) {
-      toast.error("Please select mood, sleep, and stress");
-      return;
-    }
-
     mutation.mutate({ mood, sleep, stress });
   };
 
   useEffect(() => {
     if (!moodData?.data) return;
-
     setMood(moodData.data.mood);
     setSleep(moodData.data.sleep);
     setStress(moodData.data.stress);
   }, [moodData]);
 
   return (
-    <SafeAreaView edges={["top"]} className="px-5   flex-1 bg-secondary">
-      <StatusBar barStyle="dark-content" hidden />
+    <SafeAreaView className="flex-1 bg-secondary px-5">
+      <StatusBar barStyle="light-content" />
 
       <FlatList
         data={firstFive}
-        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => <HabitCard habit={item} />}
-        contentContainerStyle={{ flexGrow: 1, gap: 10, paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 40, gap: 12 }}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <Text className="text-white text-center mt-4">
-            No incomplete habits for today!
+          <Text className="text-white text-center mt-6">
+            No incomplete habits today 🎉
           </Text>
         }
         ListHeaderComponent={
           <>
-            <View className="flex-row items-center justify-between">
-              <View className="bg-primary p-1 rounded-full">
+            {/* HEADER */}
+            <View className="flex-row items-center justify-between mt-2">
+              <TouchableOpacity
+                onPress={() => router.push("/profile")}
+                className="bg-primary p-1 rounded-full"
+              >
                 <Image
                   source={session?.user.image || profile}
-                  resizeMode="contain"
-                  className="w-10 h-10"
+                  className="w-10 h-10 rounded-full"
                 />
-              </View>
+              </TouchableOpacity>
+
               <Image source={logo} className="w-10 h-10" />
-              <Bell size={24} color={"#fff"} />
+
+              <TouchableOpacity>
+                <Bell size={22} color="#fff" />
+              </TouchableOpacity>
             </View>
-            <View className="mt-10">
-              <Text className="font-Poppins-ExtraBold text-3xl text-white">
-                👋 {greeting},
+
+            {/* GREETING */}
+            <View className="mt-8">
+              <Text className="text-white text-3xl font-Poppins-ExtraBold">
+                {greeting} 👋
               </Text>
-              <Text className="font-Poppins-ExtraBold text-4xl text-white ml-10 mt-2">
+              <Text className="text-white text-4xl font-Poppins-ExtraBold mt-1">
                 {session?.user.name}
               </Text>
             </View>
-            <View
-              className="p-5 mt-5 rounded-md bg-card"
-              style={{
-                elevation: 0.5,
-              }}
-            >
-              <Text className="font-Inter-Medium text-lg text-white">
-                How are you feeling today?
-              </Text>
-              <View
-                className="flex-row items-center justify-between gap-5 mt-3"
-                style={{
-                  shadowColor: "#DDD9FF",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.08,
-                  shadowRadius: 10,
-                  elevation: 4,
-                }}
-              >
-                {moodIcons.map((icon, index) => {
-                  const value = index + 1;
 
-                  return (
+            {/* MOOD / SLEEP / STRESS */}
+            {[
+              {
+                title: "How are you feeling today?",
+                icons: moodIcons,
+                value: mood,
+                set: setMood,
+              },
+              {
+                title: "How was your sleep?",
+                icons: sleepIcons,
+                value: sleep,
+                set: setSleep,
+              },
+              {
+                title: "How stressed are you?",
+                icons: stressIcons,
+                value: stress,
+                set: setStress,
+              },
+            ].map((item, idx) => (
+              <View key={idx} className="bg-card rounded-2xl p-5 mt-5">
+                <Text className="text-white text-lg font-Inter-Medium mb-3">
+                  {item.title}
+                </Text>
+                <View className="flex-row justify-between">
+                  {item.icons.map((icon, i) => (
                     <Card
-                      key={index}
+                      key={i}
                       icon={icon}
-                      active={mood === value}
-                      onPress={() => setMood(value)}
+                      active={item.value === i + 1}
+                      onPress={() => item.set(i + 1)}
                     />
-                  );
-                })}
+                  ))}
+                </View>
               </View>
-            </View>
+            ))}
 
-            <View
-              className="p-5 mt-5 rounded-md bg-card"
-              style={{
-                elevation: 0.5,
-              }}
-            >
-              <Text className="font-Inter-Medium text-lg text-white">
-                How was your sleep?
-              </Text>
-              <View
-                className="flex-row items-center justify-between gap-5 mt-3"
-                style={{
-                  shadowColor: "#DDD9FF",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.08,
-                  shadowRadius: 10,
-                  elevation: 4,
-                }}
-              >
-                {sleepIcons.map((icon, index) => {
-                  const value = index + 1;
-
-                  return (
-                    <Card
-                      key={index}
-                      icon={icon}
-                      active={sleep === value}
-                      onPress={() => setSleep(value)}
-                    />
-                  );
-                })}
-              </View>
-            </View>
-
-            <View
-              className="p-5 mt-5 rounded-md bg-card"
-              style={{
-                elevation: 0.5,
-              }}
-            >
-              <Text className="font-Inter-Medium text-lg text-white">
-                How stressed are you today?
-              </Text>
-              <View
-                className="flex-row items-center justify-between gap-5 mt-3"
-                style={{
-                  shadowColor: "#DDD9FF",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.08,
-                  shadowRadius: 10,
-                  elevation: 4,
-                }}
-              >
-                {stressIcons.map((icon, index) => {
-                  const value = index + 1;
-
-                  return (
-                    <Card
-                      key={index}
-                      icon={icon}
-                      active={stress === value}
-                      onPress={() => setStress(value)}
-                    />
-                  );
-                })}
-              </View>
-            </View>
             <TouchableOpacity
-              disabled={mutation.isPending}
-              className="bg-primary p-4 rounded-full mt-5"
               onPress={handleAddMood}
+              disabled={mutation.isPending}
+              className="bg-primary rounded-full py-4 mt-6"
             >
               <Text className="text-white text-center font-Inter-Bold">
                 Save Today’s Mood
               </Text>
             </TouchableOpacity>
-            <View
-              className="bg-card mt-10 p-5 rounded-md flex-row items-center "
-              style={{
-                shadowColor: "#25123F",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.08,
-                shadowRadius: 10,
-                elevation: 4,
-              }}
-            >
-              <View className="flex-1 gap-2">
-                <Text className="text-2xl font-Poppins-ExtraBold text-white">
+
+            {/* AI CARD */}
+            <View className="bg-card rounded-2xl p-5 mt-10 flex-row items-center">
+              <View className="flex-1">
+                <Text className="text-white text-2xl font-Poppins-ExtraBold">
                   MindMate AI
                 </Text>
-                <Text className="font-Inter-Medium text-md text-white">
-                  A safe place to talk, reflect, and feel supported — anytime.
+                <Text className="text-white mt-2">
+                  A safe place to talk, reflect, and feel supported.
                 </Text>
                 <TouchableOpacity
-                  className="bg-primary  p-4 flex-row justify-center items-center gap-3 rounded-full mt-3"
                   onPress={() => router.push("/chatWithAi")}
+                  className="bg-primary mt-4 py-3 rounded-full flex-row justify-center items-center gap-2"
                 >
-                  <Text className="font-Inter-Bold text-white text-md">
+                  <Text className="text-white font-Inter-Bold">
                     Start a Chat
                   </Text>
-                  <ArrowRight size={20} color="white" />
+                  <ArrowRight size={18} color="white" />
                 </TouchableOpacity>
               </View>
-              <Image source={ai} resizeMode="cover" className="size-52" />
+              <Image source={ai} className="w-36 h-36" />
             </View>
-            <View className="my-5 gap-5">
-              <View className="flex-row items-center justify-between">
-                <Text className="font-Inter-Bold text-xl text-white">
+
+            {/* HABITS HEADER */}
+            <View className="mt-8">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-white text-xl font-Inter-Bold">
                   Daily Habits
                 </Text>
-                <TouchableOpacity className="bg-primary  px-5 py-3 flex-row justify-center items-center gap-2 rounded-full">
-                  <Text className="font-Inter-Bold text-white text-sm  ">
-                    Add Habits
+                <TouchableOpacity className="bg-primary px-4 py-2 rounded-full flex-row gap-2 items-center">
+                  <Text className="text-white font-Inter-Bold text-sm">
+                    Add Habit
                   </Text>
-                  <Plus size={15} color="white" />
+                  <Plus size={14} color="white" />
                 </TouchableOpacity>
               </View>
-              <Text className="font-Inter-Medium text-lg text-white">
+
+              <Text className="text-white mt-2">
                 Check off what you’ve completed today
               </Text>
+
               {isLoading && (
                 <Text className="text-white text-center mt-4">Loading...</Text>
               )}
