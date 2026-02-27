@@ -1,26 +1,29 @@
+import CustomHeader from "@/components/CustomHeader";
+import HabitCard from "@/components/HabitCard";
+import { addHabit, getHabits } from "@/services/habits.services";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { PlusCircle } from "lucide-react-native";
+import React, { useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  FlatList,
   Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
+  View,
 } from "react-native";
-import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addHabit, getHabits } from "@/services/habits.services";
-import CustomHeader from "@/components/CustomHeader";
-import { PlusCircle } from "lucide-react-native";
-import HabitCard from "@/components/HabitCard";
 import { toast } from "sonner-native";
 
 const Habits = () => {
   const queryClient = useQueryClient();
   const [habitName, setHabitName] = useState("");
-  const { data, isLoading, isError } = useQuery({
+
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["habits"],
     queryFn: getHabits,
   });
+
   const habits = data?.habits ?? [];
 
   const mutation = useMutation({
@@ -33,7 +36,6 @@ const Habits = () => {
     onError: (error: any) => {
       const message =
         error?.message || error?.error?.message || "Something went wrong";
-
       toast.error(message);
     },
   });
@@ -43,7 +45,6 @@ const Habits = () => {
       toast.error("Please enter habit name");
       return;
     }
-
     mutation.mutate({ habitName });
   };
 
@@ -67,21 +68,39 @@ const Habits = () => {
                 placeholder="What habit do you want to build?"
                 className="flex-1 px-4 py-3 text-base font-Inter-Medium"
                 placeholderTextColor="#9ca3af"
+                editable={!mutation.isPending}
               />
+
               <TouchableOpacity
-                className="bg-card px-5 py-5 items-center justify-center"
+                disabled={mutation.isPending}
+                className={`px-5 py-5 items-center justify-center ${
+                  mutation.isPending ? "bg-card/60" : "bg-card"
+                }`}
                 onPress={handleAddHabit}
               >
-                <PlusCircle size={20} color="#fff" />
+                {mutation.isPending ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <PlusCircle size={20} color="#fff" />
+                )}
               </TouchableOpacity>
             </View>
-            {habits?.length > 0 && (
+
+            {habits.length > 0 && (
               <View className="mt-3 px-1">
                 <Text className="text-lg text-gray-500 font-Inter-Medium mt-5">
                   ✔️ Tap the checkbox to mark a habit as completed for today
                 </Text>
               </View>
             )}
+
+            {/* Fetching indicator */}
+            {isFetching && !isLoading && (
+              <View className="mt-4">
+                <ActivityIndicator size="small" color="#6b7280" />
+              </View>
+            )}
+
             {/* Content */}
             <View className="mt-8 flex-1">
               {isLoading && (
@@ -96,7 +115,7 @@ const Habits = () => {
                 </Text>
               )}
 
-              {!isLoading && data?.length === 0 && (
+              {!isLoading && habits.length === 0 && (
                 <View className="flex-1 items-center justify-center px-6">
                   <Text className="text-lg font-Inter-SemiBold text-center">
                     No habits yet 🌱
