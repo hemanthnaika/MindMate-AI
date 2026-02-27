@@ -65,7 +65,7 @@ export const markHabit = async (req, res, next) => {
     }
 
     const todayProgress = habit.progress.find(
-      (progress) => progress.date >= today && progress.date < tomorrow
+      (progress) => progress.date >= today && progress.date < tomorrow,
     );
 
     if (todayProgress) {
@@ -116,6 +116,96 @@ export const getHabits = async (req, res, next) => {
     res.status(200).json({
       success: true,
       habits,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const updateHabit = async (req, res, next) => {
+  try {
+    const user = req.session;
+    const { oldHabitName, newHabitName } = req.body;
+
+    if (!oldHabitName || !newHabitName) {
+      const error = new Error("Old and new habit names are required");
+      error.status = 400;
+      throw error;
+    }
+
+    const userHabit = await Habit.findOne({ userId: user.id });
+
+    if (!userHabit) {
+      const error = new Error("No habits found");
+      error.status = 404;
+      throw error;
+    }
+
+    const habit = userHabit.habits.find((h) => h.name === oldHabitName);
+
+    if (!habit) {
+      const error = new Error("Habit not found");
+      error.status = 404;
+      throw error;
+    }
+
+    const duplicate = userHabit.habits.find((h) => h.name === newHabitName);
+
+    if (duplicate) {
+      const error = new Error("Habit with this name already exists");
+      error.status = 400;
+      throw error;
+    }
+
+    habit.name = newHabitName;
+    await userHabit.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Habit updated successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const deleteHabit = async (req, res, next) => {
+  try {
+    const user = req.session;
+    const { habitName } = req.body;
+
+    if (!habitName) {
+      const error = new Error("Habit name is required");
+      error.status = 400;
+      throw error;
+    }
+
+    const userHabit = await Habit.findOne({ userId: user.id });
+
+    if (!userHabit) {
+      const error = new Error("No habits found");
+      error.status = 404;
+      throw error;
+    }
+
+    const habitIndex = userHabit.habits.findIndex(
+      (habit) => habit.name === habitName,
+    );
+
+    if (habitIndex === -1) {
+      const error = new Error("Habit not found");
+      error.status = 404;
+      throw error;
+    }
+
+    userHabit.habits.splice(habitIndex, 1);
+    await userHabit.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Habit deleted successfully",
     });
   } catch (error) {
     console.error(error);

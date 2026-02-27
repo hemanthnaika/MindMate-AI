@@ -1,21 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
+import CustomHeader from "@/components/CustomHeader";
+import { getChatHistory, sendMessage } from "@/services/chat.services";
+import Feather from "@expo/vector-icons/Feather";
+import { router } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
+  ActivityIndicator,
+  FlatList,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
   StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import CustomHeader from "@/components/CustomHeader";
-import { router } from "expo-router";
-import Feather from "@expo/vector-icons/Feather";
-import { getChatHistory, sendMessage } from "@/services/chat.services";
 import Markdown from "react-native-markdown-display";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const markdownStyles = StyleSheet.create({
   body: {
@@ -106,6 +106,8 @@ const ChatWithAi = () => {
       flatListRef.current?.scrollToEnd({ animated: true });
     }
   };
+
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-secondary">
