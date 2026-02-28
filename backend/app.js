@@ -17,11 +17,17 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: false,
+    origin: (origin, callback) => {
+      // allow all origins (Expo, Web, APK, Postman)
+      callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // 🔴 REQUIRED
   }),
 );
+
+app.options("*", cors());
 
 app.all("/api/auth/*", toNodeHandler(auth));
 app.use("/api/v1/user", UserRouter);
