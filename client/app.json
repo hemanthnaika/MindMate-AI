@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "mindMateAi",
-    "slug": "mindMateAi",
+    "slug": "mindmateai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/logo.png",
@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/icons/logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.hemanthhemanth.mindmateai"
     },
     "web": {
       "bundler": "metro",
@@ -49,7 +50,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "61fd0bca-ac31-4374-b873-f0041441e129"
+        "projectId": "d4f7bf7a-4f20-4068-8e9b-03871b9d7600"
       }
     },
     "runtimeVersion": {
@@ -57,6 +58,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/61fd0bca-ac31-4374-b873-f0041441e129"
-    }
+    },
+    "owner": "hemanth-hemanth"
   }
 }
