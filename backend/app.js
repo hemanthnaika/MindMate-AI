@@ -16,25 +16,29 @@ import dashboardRouter from "./routes/dashboard.route.js";
 const app = express();
 app.use(express.json());
 const allowedOrigins = process.env.CLIENT_URLS
-  ? process.env.CLIENT_URLS.split(",")
+  ? process.env.CLIENT_URLS.split(",").map((o) => o.trim())
   : [];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (Postman, mobile apps, APK)
+      console.log("CORS Origin:", origin);
+
+      // Allow mobile apps, APK, Postman
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      callback(new Error("Not allowed by CORS"));
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
     },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
 );
+
+app.options("*", cors());
 
 app.all("/api/auth/*", toNodeHandler(auth));
 app.use("/api/v1/user", UserRouter);
