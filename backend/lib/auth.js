@@ -8,9 +8,7 @@ const client = new MongoClient(DB_URL);
 const db = client.db();
 
 export const auth = betterAuth({
-  trustedOrigins: ORIGIN
-    ? ORIGIN.split(",").map((origin) => origin.trim())
-    : [],
+  trustedOrigins: [ORIGIN],
 
   plugins: [expo()],
   database: mongodbAdapter(db, {
