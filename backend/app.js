@@ -15,12 +15,25 @@ import dashboardRouter from "./routes/dashboard.route.js";
 
 const app = express();
 app.use(express.json());
+const allowedOrigins = process.env.CLIENT_URLS
+  ? process.env.CLIENT_URLS.split(",")
+  : [];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, mobile apps, APK)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: false,
-  })
+    credentials: true,
+  }),
 );
 
 app.all("/api/auth/*", toNodeHandler(auth));
@@ -29,8 +42,6 @@ app.use("/api/v1/ai", ChatRouter);
 app.use("/api/v1/mood", MoodRoute);
 app.use("/api/v1/habit", HabitRoute);
 app.use("/api/v1/dashboard", dashboardRouter);
-
-
 
 app.use(errorMiddleware);
 app.get("/", (req, res) => {
