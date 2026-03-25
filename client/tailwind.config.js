@@ -6,24 +6,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#6B5CFF",
-        secondary: "#2D144B",
-        warning: "#FD824C",
-        error: "#F62B2B",
-        success: "#48B231",
-
-        black: "#111113",
-        white: "#ffffff",
-        card: "#25123F",
+        primary: "#76A1B5",
+        secondary: "#000000",
+        tertiary: "#C29166",
+        neutral: "#1A1C1E",
       },
       fontFamily: {
-        "Inter-Regular": ["Inter-Regular", "sans-serif"],
-        "Inter-Medium": ["Inter-Medium", "sans-serif"],
-        "Inter-Bold": ["Inter-Bold", "sans-serif"],
-
-        "Poppins-Medium": ["Poppins-Medium", "sans-serif"],
-        "Poppins-Bold": ["Poppins-Bold", "sans-serif"],
-        "Poppins-ExtraBold": ["Poppins-ExtraBold", "sans-serif"],
+        "Plus-Regular": ["Plus-Regular", "sans-serif"],
+        "Plus-Medium": ["Plus-Medium", "sans-serif"],
+        "Plus-Bold": ["Plus-Bold", "sans-serif"],
       },
     },
   },

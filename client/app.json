@@ -7,7 +7,7 @@
     "icon": "./assets/icons/logo.png",
     "scheme": "mindmateai",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true
     },
@@ -41,7 +41,8 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -57,7 +58,8 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/61fd0bca-ac31-4374-b873-f0041441e129"
+      "url": "https://u.expo.dev/61fd0bca-ac31-4374-b873-f0041441e129",
+      "enabled": false
     },
     "owner": "hemanth-hemanth"
   }

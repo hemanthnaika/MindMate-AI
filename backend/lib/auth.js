@@ -8,7 +8,11 @@ const client = new MongoClient(DB_URL);
 const db = client.db();
 
 export const auth = betterAuth({
-  trustedOrigins: [ORIGIN],
+  trustedOrigins: [
+    "exp://*",
+    "http://localhost:8081",
+    "http://10.184.78.14:8081",
+  ],
 
   plugins: [expo()],
   database: mongodbAdapter(db, {

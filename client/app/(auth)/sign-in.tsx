@@ -51,7 +51,7 @@ const SignIn = () => {
   const isDisabled = mutation.isPending;
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-white px-5 mt-4">
+    <SafeAreaView edges={["top"]} className="flex-1 bg-white px-5 pt-4">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
