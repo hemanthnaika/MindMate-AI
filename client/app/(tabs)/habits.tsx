@@ -52,7 +52,7 @@ const Habits = () => {
   return (
     <View className="flex-1 bg-secondary ">
       <SafeAreaView className="px-7 bg-neutral pb-5">
-        <CustomHeader title="Daily Habits" onPress={() => router.back()} />
+        <CustomHeader title="Daily Habits " onPress={() => router.back()} />
       </SafeAreaView>
       <SafeAreaView edges={["bottom"]} className="px-7">
         <FlatList
