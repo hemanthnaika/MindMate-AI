@@ -9,7 +9,7 @@ export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
     "Plus-Regular": require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "Plus-Medium": require("../assets/fonts/PlusJakartaSans-Medium.ttf"),
-    "Plus-Bold": require("../assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
+    "Plus-Bold": require("../assets/fonts/PlusJakartaSans-ExtraBoldItalic.ttf"),
   });
   useEffect(() => {
     if (error) throw error;

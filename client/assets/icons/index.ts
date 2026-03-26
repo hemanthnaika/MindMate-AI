@@ -4,4 +4,5 @@ import splashBg from "./bg.png";
 import google from "./google.png";
 import profile from "./profile.png";
 import ai from "./ai.png";
-export { logo, Hero, splashBg, google, profile, ai };
+import quote from "./quote.png";
+export { logo, Hero, splashBg, google, profile, ai, quote };

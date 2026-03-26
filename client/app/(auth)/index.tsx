@@ -26,11 +26,11 @@ const InfoCard = ({
   const Icon = icon;
   return (
     <View className="bg-neutral/90 p-10 rounded-md flex-col gap-3 mt-5">
-      <Icon size={20} color="#76A1B5" />
+      <Icon size={25} color="#76A1B5" />
       <Text className="text-white font-Plus-Bold text-2xl font-extrabold">
         {title}
       </Text>
-      <Text className="text-white font-Plus-Medium text-md">{descripton}</Text>
+      <Text className="text-white font-Plus-Regular text-lg">{descripton}</Text>
     </View>
   );
 };

@@ -62,54 +62,36 @@ const HabitCard = ({ habit }: { habit: any }) => {
   return (
     <>
       {/* ================= HABIT CARD ================= */}
-      <View className="bg-card rounded-2xl p-5 border border-white/10 shadow mb-4">
+      <View className="bg-neutral/60 rounded-2xl p-5 border border-white/10 shadow mb-4">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4 flex-1">
-            <Checkbox
-              checked={habit.completed}
-              onToggle={handleToggle}
-              checkStyle="w-10 h-10"
-            />
-
             <View className="flex-1">
               <Text
-                className={`font-Inter-SemiBold text-lg ${
+                className={`font-Plus-Bold text-lg ${
                   habit.completed ? "text-gray-400 line-through" : "text-white"
                 }`}
               >
                 {habit?.name}
               </Text>
 
-              <Text className="text-xs text-gray-400 mt-1">
+              <Text className="text-md text-gray-400 mt-1 font-Plus-Regular ">
                 {habit.completed ? "Completed today 🎉" : "Keep going 💪"}
               </Text>
             </View>
-          </View>
-
-          <View className="flex-row items-center gap-4">
-            <Pressable onPress={() => setEditOpen(true)}>
-              <Pencil size={18} color="#a78bfa" />
-            </Pressable>
-
-            <Pressable onPress={() => setDeleteOpen(true)}>
-              <Trash2 size={18} color="#ef4444" />
-            </Pressable>
+            <Checkbox
+              checked={habit.completed}
+              onToggle={handleToggle}
+              checkStyle="w-10 h-10"
+            />
           </View>
         </View>
 
         {/* Stats */}
         <View className="flex-row justify-between mt-4">
-          <Text className="text-sm text-gray-400">
+          <Text className="text-sm text-gray-400 font-Plus-Medium">
             🔥 Streak:{" "}
-            <Text className="text-white font-Inter-Medium">
+            <Text className="text-white font-Plus-Medium">
               {habit?.streak} days
-            </Text>
-          </Text>
-
-          <Text className="text-sm text-gray-400">
-            🎯 Consistency:{" "}
-            <Text className="text-white font-Inter-Medium">
-              {habit?.consistency}%
             </Text>
           </Text>
         </View>
@@ -121,6 +103,22 @@ const HabitCard = ({ habit }: { habit: any }) => {
             style={{ width: `${habit?.consistency}%` }}
           />
         </View>
+
+        <View className="flex-row items-center gap-7 mt-5">
+          <Pressable
+            onPress={() => setEditOpen(true)}
+            className="bg-primary p-2 rounded-full"
+          >
+            <Pencil size={18} color="#1A1C1E" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => setDeleteOpen(true)}
+            className="bg-red-500 p-2 rounded-full"
+          >
+            <Trash2 size={18} color="#1A1C1E" />
+          </Pressable>
+        </View>
       </View>
 
       {/* ================= UPDATE MODAL ================= */}
@@ -130,17 +128,17 @@ const HabitCard = ({ habit }: { habit: any }) => {
           onPress={() => setEditOpen(false)}
         >
           <Pressable
-            className="bg-card p-6 rounded-t-3xl"
+            className="bg-neutral p-6 rounded-t-3xl"
             onPress={(e) => e.stopPropagation()}
           >
-            <Text className="text-white text-xl mb-4 font-Inter-SemiBold">
+            <Text className="text-white text-xl mb-4 font-Plus-Bold">
               Rename Habit
             </Text>
 
             <TextInput
               value={newName}
               onChangeText={setNewName}
-              className="bg-white/10 text-white p-4 rounded-xl mb-4"
+              className="bg-white/10 text-white p-4 rounded-xl mb-4 font-Plus-Bold"
               placeholder="Habit name"
               placeholderTextColor="#9ca3af"
             />
@@ -157,7 +155,7 @@ const HabitCard = ({ habit }: { habit: any }) => {
                 })
               }
             >
-              <Text className="text-white text-center font-Inter-SemiBold">
+              <Text className="text-white text-center font-Plus-Bold">
                 {updateMutation.isPending ? "Updating..." : "Save Changes"}
               </Text>
             </Pressable>
@@ -172,14 +170,14 @@ const HabitCard = ({ habit }: { habit: any }) => {
           onPress={() => setDeleteOpen(false)}
         >
           <Pressable
-            className="bg-card p-6 rounded-2xl"
+            className="bg-neutral p-6 rounded-2xl"
             onPress={(e) => e.stopPropagation()}
           >
-            <Text className="text-white text-lg mb-3 font-Inter-SemiBold">
+            <Text className="text-white text-lg mb-3 font-Plus-Bold">
               Delete Habit?
             </Text>
 
-            <Text className="text-gray-400 mb-6">
+            <Text className="text-gray-400 mb-6 font-Plus-Medium">
               This habit and its progress will be permanently removed.
             </Text>
 
@@ -188,7 +186,9 @@ const HabitCard = ({ habit }: { habit: any }) => {
                 className="flex-1 bg-white/10 p-3 rounded-xl"
                 onPress={() => setDeleteOpen(false)}
               >
-                <Text className="text-white text-center">Cancel</Text>
+                <Text className="text-white text-center font-Plus-Bold">
+                  Cancel
+                </Text>
               </Pressable>
 
               <Pressable
@@ -198,7 +198,7 @@ const HabitCard = ({ habit }: { habit: any }) => {
                 }`}
                 onPress={() => deleteMutation.mutate({ habitName: habit.name })}
               >
-                <Text className="text-white text-center font-Inter-SemiBold">
+                <Text className="text-white text-center font-Plus-Bold">
                   {deleteMutation.isPending ? "Deleting..." : "Delete"}
                 </Text>
               </Pressable>

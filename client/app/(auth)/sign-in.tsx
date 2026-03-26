@@ -51,25 +51,30 @@ const SignIn = () => {
   const isDisabled = mutation.isPending;
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-white px-5 pt-4">
+    <SafeAreaView edges={["top"]} className="flex-1 bg-secondary px-5 pt-4">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <TouchableOpacity
-          className="bg-[#ffffff] rounded-lg self-start px-5 py-2 "
-          onPress={() => router.back()}
-        >
-          <Feather name="arrow-left" size={20} color="black" />
-        </TouchableOpacity>
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity
+            className=" rounded-lg self-start px-5 py-2 bg-primary"
+            onPress={() => router.back()}
+          >
+            <Feather name="arrow-left" size={20} color="white" />
+          </TouchableOpacity>
+          <Text className="text-primary font-Plus-Bold font-extrabold text-2xl">
+            MindMate-AI
+          </Text>
+          <View />
+        </View>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="flex-1 items-center gap-4 px-3">
-            <Image source={logo} className="w-40 h-w-40" resizeMode="contain" />
-            <Text className="font-Poppins-ExtraBold text-3xl">
+          <View className="flex-1 items-center gap-4 px-3 bg-neutral/90 p-10 mt-10 rounded-2xl">
+            <Image source={logo} className="w-20 h-20" resizeMode="contain" />
+            <Text className="font-Plus-Bold text-white text-5xl">
               Welcome Back
             </Text>
-            <Text className="font-Poppins-Medium text-center">
-              Sign in to continue your journey toward better habits and mental
-              wellness.
+            <Text className="text-white font-Plus-Bold text-md">
+              Continue your journey to wellness.
             </Text>
             <Controller
               name="email"
@@ -82,10 +87,10 @@ const SignIn = () => {
                 },
               }}
               render={({ field: { onChange, value } }) => (
-                <View className="px-5">
+                <View className="px-5 mt-10">
                   <CustomInput
-                    label="Email"
-                    placeholder="Enter your email"
+                    label="Email Address"
+                    placeholder="name@example.com"
                     onChangeText={onChange}
                     value={value}
                     keyboardType="email-address"
@@ -127,11 +132,6 @@ const SignIn = () => {
                 </View>
               )}
             />
-            <TouchableOpacity className="mt-5">
-              <Text className="font-Poppins-Bold text-right text-primary">
-                Forgot Password
-              </Text>
-            </TouchableOpacity>
 
             <CustomButton
               isLoading={mutation.isPending}
@@ -143,11 +143,22 @@ const SignIn = () => {
               className="mt-8"
               onPress={() => router.push("/(auth)/sign-up")}
             >
-              <Text className=" font-Poppins-Bold text-center">
+              <Text className=" font-Plus-Bold text-center text-white text-md">
                 Don’t have an account?
                 <Text className="text-primary"> Sign Up</Text>
               </Text>
             </TouchableOpacity>
+          </View>
+          <View className="flex-row items-center justify-between mt-10 px-10">
+            <Text className="text-primary  font-Plus-Bold text-md">
+              Privacy Policy
+            </Text>
+            <Text className="text-primary font-Plus-Bold text-md">
+              Term of Service
+            </Text>
+            <Text className="text-primary font-Plus-Bold text-md">
+              Help center
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
