@@ -70,12 +70,12 @@ const Index = () => {
           title="Start your journey"
           icon={ArrowRight}
           onPress={() => router.push("/(auth)/sign-up")}
-          style="mt-10"
+          style="mt-10 bg-primary"
         />
         <CustomButton
           title="   Already a member?"
           onPress={() => router.push("/(auth)/sign-in")}
-          style="mt-5 bg-neutral/90  mb-10"
+          style="mt-5 bg-neutral  mb-10"
           textStyle="text-white"
         />
         <InfoCard

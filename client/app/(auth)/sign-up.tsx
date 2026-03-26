@@ -190,7 +190,7 @@ const SignUp = () => {
             <CustomButton
               isLoading={mutation.isPending}
               title="Sign In"
-              style="mt-2 w-full"
+              style="mt-2 w-full bg-primary"
               onPress={handleSubmit(handleSignIn)}
             />
             <TouchableOpacity

@@ -136,7 +136,7 @@ const SignIn = () => {
             <CustomButton
               isLoading={mutation.isPending}
               title="Sign In"
-              style="mt-5 w-full"
+              style="mt-5 w-full bg-primary"
               onPress={handleSubmit(handleSignIn)}
             />
             <TouchableOpacity

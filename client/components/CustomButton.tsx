@@ -23,7 +23,7 @@ const CustomButton = ({
   return (
     <TouchableOpacity
       className={cn(
-        "bg-primary px-10 py-5 rounded-full flex-row items-center gap-3 text-center justify-center",
+        " px-10 py-5 rounded-full flex-row items-center gap-3 text-center justify-center",
         style!,
       )}
       onPress={onPress}
