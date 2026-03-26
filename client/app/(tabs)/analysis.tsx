@@ -1,14 +1,25 @@
+import CustomHeader from "@/components/CustomHeader";
 import { getUserAnalysis } from "@/services/analysis.services";
 import { useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
+import {
+  Award,
+  Brain,
+  CircleDot,
+  Infinity,
+  Medal,
+  Sparkles,
+  SquareChartGantt,
+  ThumbsDown,
+  TrendingUp,
+} from "lucide-react-native";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const StatCard = ({ label, value }: { label: string; value: any }) => (
   <View className="bg-card rounded-2xl p-4 w-[48%] mb-4 shadow-sm">
-    <Text className="text-xs font-Poppins-Bold text-gray-300 mb-1">
-      {label}
-    </Text>
-    <Text className="text-3xl font-Inter-Medium text-white">{value}</Text>
+    <Text className="text-xs font-Plus-Bold text-gray-300 mb-1">{label}</Text>
+    <Text className="text-3xl font-Plus-Medium text-white">{value}</Text>
   </View>
 );
 
@@ -29,7 +40,7 @@ const Analysis = () => {
   if (isError || !data) {
     return (
       <View className="flex-1 justify-center items-center bg-secondary">
-        <Text className="text-red-500 font-Inter-Medium">
+        <Text className="text-red-500 font-Plus-Bold">
           Failed to load analysis
         </Text>
       </View>
@@ -37,94 +48,154 @@ const Analysis = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-secondary">
-      <ScrollView
-        className="flex-1 px-4"
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* ===== SUMMARY ===== */}
-        <View className="bg-card rounded-2xl p-5 mt-4 mb-6 shadow">
-          <Text className="text-lg font-Poppins-Bold text-white mb-2">
-            Daily Summary
+    <View className="flex-1 bg-secondary">
+      <SafeAreaView className="px-7 bg-neutral pb-5">
+        <CustomHeader
+          title="Analysis Dashboard "
+          onPress={() => router.back()}
+        />
+      </SafeAreaView>
+      <SafeAreaView edges={["bottom"]} className="px-7 mt-5">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 150 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text className="text-white font-Plus-Bold text-lg">
+            - Daily Summary
           </Text>
-          <Text className="text-md font-Inter-Medium text-white leading-6">
+          <Text className="text-4xl font-Plus-Bold text-white mt-5">
             {data.summary}
           </Text>
-          <Text className="mt-3 text-blue-500 font-Inter-Medium">
+          <Text className="mt-3 text-white font-Plus-Bold text-lg">
             {data.message}
           </Text>
-        </View>
+          <View className="bg-neutral flex-row items-center p-5 gap-5 mt-5 rounded-lg">
+            <View className=" bg-primary p-3 rounded-full">
+              <TrendingUp size={30} color="#fff" />
+            </View>
+            <View className="">
+              <Text className="text-white font-Plus-Medium text-lg ">
+                Today&apos;s Pulse
+              </Text>
+              <Text className="text-white font-Plus-Bold text-lg ">
+                {" "}
+                Mood: {data.todayMood}
+              </Text>
+              <Text className="text-primary font-Plus-Bold text-lg  ">
+                {" "}
+                Trend: {data.moodTrend}
+              </Text>
+            </View>
+          </View>
 
-        {/* ===== STATS ===== */}
-        <Text className="text-white font-Poppins-Bold text-lg mb-3">
-          Your Stats
-        </Text>
-        <View className="flex-row flex-wrap justify-between">
-          <StatCard label="Avg Mood (30d)" value={data.avgMood30} />
-          <StatCard label="Avg Stress" value={data.avgStress} />
-          <StatCard label="Consistency %" value={`${data.avgConsistency}%`} />
-          <StatCard label="Best Streak 🔥" value={data.bestStreak} />
-        </View>
+          <View className="bg-neutral  mt-5 p-5 gap-5 rounded-lg">
+            <View className="flex-row justify-between items-center  ">
+              <Text className="text-md font-Plus-Medium text-white">
+                Avg Mood (30d)
+              </Text>
+              <SquareChartGantt color={"#76A1B5"} />
+            </View>
+            <Text className="font-Plus-Bold text-5xl text-white ">
+              {data.avgMood30}
+            </Text>
+          </View>
 
-        {/* ===== TODAY ===== */}
-        <View className="bg-card rounded-2xl p-5 mb-6 shadow">
-          <Text className="font-Poppins-Bold text-white mb-3 text-lg">
-            Today
-          </Text>
-          <Text className="font-Inter-Medium text-white text-md mb-1">
-            Mood: {data.todayMood}
-          </Text>
-          <Text className="font-Inter-Medium text-white text-md">
-            Mood Trend: {data.moodTrend}
-          </Text>
-        </View>
+          <View className="bg-neutral  mt-5 p-5 gap-5 rounded-lg">
+            <View className="flex-row justify-between items-center  ">
+              <Text className="text-md font-Plus-Medium text-white">
+                Avg Stress
+              </Text>
+              <Brain color={"#76A1B5"} />
+            </View>
 
-        {/* ===== HABITS ===== */}
-        <View className="bg-card rounded-2xl p-5 mb-6 shadow">
-          <Text className="font-Poppins-Bold text-white text-lg mb-3">
+            <Text className="font-Plus-Bold text-5xl text-white ">
+              {data.avgStress}
+            </Text>
+          </View>
+
+          <View className="bg-neutral  mt-5 p-5 gap-5 rounded-lg">
+            <View className="flex-row justify-between items-center">
+              <Text className="text-md font-Plus-Medium text-white">
+                Consistency
+              </Text>
+              <Infinity color={"#76A1B5"} />
+            </View>
+
+            <Text className="font-Plus-Bold text-5xl text-white ">
+              {data.avgConsistency}%
+            </Text>
+          </View>
+
+          <Text className="text-white mt-5 font-Plus-Bold text-2xl">
             Habits Overview
           </Text>
 
-          <View className="space-y-1">
-            <Text className="text-white font-Inter-Medium text-md">
-              Total Habits: {data.totalHabits}
-            </Text>
-            <Text className="text-white font-Inter-Medium text-md">
-              Completed: {data.habitStats.completed} / {data.habitStats.total}
-            </Text>
-            <Text className="text-white font-Inter-Medium text-md">
-              Completion: {data.habitStats.percentage}%
+          <View className="flex-row items-center  gap-5 ">
+            <View className="bg-neutral  mt-5 p-5 gap-5 flex-1 rounded-lg">
+              <Text className="text-md font-Plus-Medium text-white">
+                Completion
+              </Text>
+              <Text className="font-Plus-Bold text-5xl text-white ">
+                {data.habitStats.completed} / {data.totalHabits}{" "}
+                <Text className="text-sm">{data.habitStats.percentage}%</Text>
+              </Text>
+            </View>
+
+            <View className="bg-neutral  mt-5 p-5 gap-5 flex-1 rounded-lg">
+              <View className="flex-row justify-between items-center  ">
+                <Text className="text-md font-Plus-Medium text-white">
+                  Current Streak
+                </Text>
+                <Medal color={"#76A1B5"} />
+              </View>
+              <Text className="font-Plus-Bold text-5xl text-white ">
+                {data.bestStreak}
+              </Text>
+            </View>
+          </View>
+
+          <View className="bg-neutral mt-5 p-5 flex-row items-center gap-5 rounded-lg">
+            <View className="bg-primary/50 p-2 rounded-xl">
+              <Award color={"#76A1B5"} />
+            </View>
+            <Text className="text-white font-Plus-Bold text-lg ">
+              Best Habit:{"   "}
+              {data.bestHabit?.name}
             </Text>
           </View>
 
-          <View className="mt-4 border-t border-gray-700 pt-3">
-            <Text className="font-Inter-Medium text-green-500 text-md">
-              Best Habit: {data.bestHabit?.name} ({data.bestHabit?.count})
-            </Text>
-            <Text className="font-Inter-Medium text-red-500 mt-2 text-md">
-              Worst Habit: {data.worstHabit30?.name}
+          <View className="bg-neutral mt-5 p-5 flex-row items-center gap-5 rounded-lg">
+            <View className="bg-red-500 p-2 rounded-xl">
+              <ThumbsDown color={"#76A1B5"} />
+            </View>
+            <Text className="text-white font-Plus-Bold text-lg">
+              Worst Habit:{"   "}
+              {data.worstHabit30?.name}
             </Text>
           </View>
-        </View>
 
-        {/* ===== INSIGHTS ===== */}
-        <View className="bg-card rounded-2xl p-5 shadow">
-          <Text className="font-Poppins-Bold text-lg text-white mb-3">
-            Insights
-          </Text>
+          <View className="bg-neutral mt-5 rounded-2xl p-5">
+            {/* Header */}
+            <View className="flex-row items-center gap-3 mb-10">
+              <Sparkles size={28} color="#76A1B5" />
+              <Text className="font-Plus-Bold text-xl text-white ">
+                Deep Insight
+              </Text>
+            </View>
 
-          {data.insights.map((insight: string, index: number) => (
-            <Text
-              key={index}
-              className="text-white font-Inter-Medium mb-2 leading-6"
-            >
-              • {insight}
-            </Text>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            {data?.insights?.map((insight: string, index: number) => (
+              <View key={index} className="flex-row items-start gap-3 mb-3">
+                <CircleDot size={18} color="#76A1B5" />
+
+                <Text className="flex-1 text-white font-Plus-Medium text-base leading-6">
+                  {insight}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 };
 

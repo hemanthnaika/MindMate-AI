@@ -15,9 +15,7 @@ const CustomHeader = ({
       onPress={onPress}
     >
       <Feather name="arrow-left-circle" color={"#ffffff"} size={30} />
-      <Text className="text-white font-Poppins-ExtraBold text-2xl">
-        {title}
-      </Text>
+      <Text className="text-white font-Plus-Bold text-2xl">{title}</Text>
       <View />
     </TouchableOpacity>
   );

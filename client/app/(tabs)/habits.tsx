@@ -2,6 +2,7 @@ import CustomHeader from "@/components/CustomHeader";
 import HabitCard from "@/components/HabitCard";
 import { addHabit, getHabits } from "@/services/habits.services";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { PlusCircle } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -49,30 +50,25 @@ const Habits = () => {
   };
 
   return (
-    <SafeAreaView className="bg-secondary flex-1 px-5">
-      <FlatList
-        data={habits}
-        keyExtractor={(item) => item.name}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        renderItem={({ item }) => <HabitCard habit={item} />}
-        ListHeaderComponent={
-          <View>
-            {/* ===== HEADER ===== */}
-            <CustomHeader title="Daily Habits" />
-
-            {/* ===== ADD HABIT ===== */}
-            <View className="mt-8 bg-card rounded-2xl p-4 shadow">
-              <Text className="text-white font-Poppins-Bold text-lg mb-3">
-                Add a new habit
-              </Text>
-
-              <View className="flex-row items-center bg-white rounded-xl overflow-hidden">
+    <View className="flex-1 bg-secondary ">
+      <SafeAreaView className="px-7 bg-neutral pb-5">
+        <CustomHeader title="Daily Habits " onPress={() => router.back()} />
+      </SafeAreaView>
+      <SafeAreaView edges={["bottom"]} className="px-7">
+        <FlatList
+          data={habits}
+          keyExtractor={(item) => item.name}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          renderItem={({ item }) => <HabitCard habit={item} />}
+          ListHeaderComponent={
+            <View>
+              <View className="flex-row items-center bg-neutral/90 rounded-xl overflow-hidden mt-5">
                 <TextInput
                   value={habitName}
                   onChangeText={setHabitName}
                   placeholder="What habit do you want to build?"
-                  className="flex-1 px-4 py-3 text-base font-Inter-Medium"
+                  className="flex-1 px-4 py-3  font-Plus-Medium text-white text-lg"
                   placeholderTextColor="#9ca3af"
                   editable={!mutation.isPending}
                 />
@@ -81,7 +77,7 @@ const Habits = () => {
                   disabled={mutation.isPending}
                   onPress={handleAddHabit}
                   className={`px-5 py-5 items-center justify-center ${
-                    mutation.isPending ? "bg-card/60" : "bg-card"
+                    mutation.isPending ? "bg-neutral/50" : "bg-neutral"
                   }`}
                 >
                   {mutation.isPending ? (
@@ -91,59 +87,52 @@ const Habits = () => {
                   )}
                 </TouchableOpacity>
               </View>
-            </View>
 
-            {/* ===== HELPER TEXT ===== */}
-            {habits.length > 0 && (
-              <Text className="text-sm text-gray-400 font-Inter-Medium mt-4 px-1">
-                ✔️ Tap the checkbox to mark a habit as completed for today
-              </Text>
-            )}
-
-            {/* ===== FETCHING INDICATOR ===== */}
-            {isFetching && !isLoading && (
-              <View className="mt-4 items-center">
-                <ActivityIndicator size="small" color="#6b7280" />
-              </View>
-            )}
-
-            {/* ===== STATES ===== */}
-            <View className="mt-6">
-              {isLoading && (
-                <Text className="text-center text-gray-500 font-Inter-Medium">
-                  Loading habits…
-                </Text>
-              )}
-
-              {isError && (
-                <Text className="text-center text-red-500 font-Inter-Medium">
-                  Failed to load habits
-                </Text>
-              )}
-
-              {!isLoading && habits.length === 0 && (
-                <View className="mt-16 items-center px-6">
-                  <Text className="text-xl font-Poppins-Bold text-white text-center">
-                    No habits yet 🌱
-                  </Text>
-                  <Text className="mt-2 text-center text-gray-400 font-Inter-Medium">
-                    Start with one small habit today. Consistency matters more
-                    than perfection.
-                  </Text>
+              {/* ===== FETCHING INDICATOR ===== */}
+              {isFetching && !isLoading && (
+                <View className="mt-4 items-center">
+                  <ActivityIndicator size="small" color="#6b7280" />
                 </View>
               )}
-            </View>
 
-            {/* ===== LIST HEADER SPACING ===== */}
-            {habits.length > 0 && (
-              <Text className="mt-6 mb-3 text-white font-Poppins-Bold text-lg">
-                Your Habits
-              </Text>
-            )}
-          </View>
-        }
-      />
-    </SafeAreaView>
+              {/* ===== STATES ===== */}
+              <View className="mt-6">
+                {isLoading && (
+                  <Text className="text-center text-gray-500 font-Plus-Medium">
+                    Loading habits…
+                  </Text>
+                )}
+
+                {isError && (
+                  <Text className="text-center text-red-500 font-Inter-Medium">
+                    Failed to load habits
+                  </Text>
+                )}
+
+                {!isLoading && habits.length === 0 && (
+                  <View className="mt-16 items-center px-6">
+                    <Text className="text-xl font-Plus-Bold text-white text-center">
+                      No habits yet
+                    </Text>
+                    <Text className="mt-2 text-center text-gray-400 font-Plus-Medium">
+                      Start with one small habit today. Consistency matters more
+                      than perfection.
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              {/* ===== LIST HEADER SPACING ===== */}
+              {habits.length > 0 && (
+                <Text className="mb-3 text-white font-Plus-Bold text-lg">
+                  Daily Habits
+                </Text>
+              )}
+            </View>
+          }
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 

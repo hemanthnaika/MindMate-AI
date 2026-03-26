@@ -22,15 +22,19 @@ const markdownStyles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontFamily: "Inter-Medium",
+    color: "#fff",
   },
   strong: {
     fontWeight: "700",
+    color: "#fff",
   },
   bullet_list: {
     marginVertical: 6,
+    color: "#fff",
   },
   list_item: {
     marginVertical: 4,
+    color: "#fff",
   },
   paragraph: {
     marginBottom: 8,
@@ -113,7 +117,7 @@ const ChatWithAi = () => {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View className="px-5">
+        <View className="px-5 ">
           <CustomHeader title="MindMate AI" onPress={() => router.back()} />
         </View>
 
@@ -140,16 +144,30 @@ const ChatWithAi = () => {
           }}
           renderItem={({ item }) => (
             <View
-              className={`mb-3 max-w-[80%] px-4 py-3 rounded-2xl ${
-                item.ai ? "bg-white self-start" : "bg-primary self-end"
+              className={`mb-3 max-w-[80%] p-1  rounded-2xl ${
+                item.ai ? " self-start" : " self-end"
               }`}
             >
               {item.ai ? (
-                <Markdown style={markdownStyles}>{item.text}</Markdown>
+                <View>
+                  <Text className="text-primary mb-2 uppercase text-xs font-Plus-Regular">
+                    Mindmate Ai
+                  </Text>
+                  <View className="bg-neutral p-5 rounded-xl">
+                    <Markdown style={markdownStyles}>{item.text}</Markdown>
+                  </View>
+                </View>
               ) : (
-                <Text className="font-Poppins-Medium text-white">
-                  {item.text}
-                </Text>
+                <View>
+                  <Text className="text-primary mb-2 uppercase text-xs font-Plus-Regular">
+                    You
+                  </Text>
+                  <View className="bg-primary/50 p-5 rounded-xl">
+                    <Text className="font-Poppins-Medium text-white">
+                      {item.text}
+                    </Text>
+                  </View>
+                </View>
               )}
             </View>
           )}
@@ -160,7 +178,7 @@ const ChatWithAi = () => {
           style={{
             padding: 12,
             borderTopWidth: 1,
-            borderColor: "#e5e7eb",
+            borderColor: "#1A1C1E",
             flexDirection: "row",
             alignItems: "center",
             gap: 10,
@@ -171,12 +189,14 @@ const ChatWithAi = () => {
             value={input}
             onChangeText={setInput}
             placeholder="Type how you’re feeling…"
+            placeholderTextColor={"#fff"}
             style={{
               flex: 1,
-              backgroundColor: "#f1f5f9",
+              backgroundColor: "#1A1C1E",
               paddingHorizontal: 16,
               paddingVertical: 20,
               borderRadius: 12,
+              color: "#fff",
             }}
             multiline
           />
@@ -185,7 +205,7 @@ const ChatWithAi = () => {
             disabled={loading}
             onPress={handleSend}
             style={{
-              backgroundColor: "#4f46e5",
+              backgroundColor: "#76A1B5",
               padding: 12,
               borderRadius: 999,
               opacity: loading ? 0.6 : 1,

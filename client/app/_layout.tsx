@@ -7,13 +7,9 @@ import { Toaster } from "sonner-native";
 export default function RootLayout() {
   const queryClient = new QueryClient();
   const [fontsLoaded, error] = useFonts({
-    "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
-    "Inter-Medium": require("../assets/fonts/Inter-Medium.ttf"),
-    "Inter-Bold": require("../assets/fonts/Inter-Bold.ttf"),
-
-    "Poppins-Medium": require("../assets/fonts/Poppins-Medium.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
+    "Plus-Regular": require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
+    "Plus-Medium": require("../assets/fonts/PlusJakartaSans-Medium.ttf"),
+    "Plus-Bold": require("../assets/fonts/PlusJakartaSans-ExtraBoldItalic.ttf"),
   });
   useEffect(() => {
     if (error) throw error;

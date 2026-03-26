@@ -1,6 +1,6 @@
 import { Image, ImageBackground, Text, View } from "react-native";
 import "./global.css";
-import { splashBg, splashHero } from "@/assets/icons";
+import { Hero, splashBg } from "@/assets/icons";
 
 import { useEffect } from "react";
 import { router } from "expo-router";
@@ -39,11 +39,7 @@ export default function Index() {
 
       {/* 🖼 Middle Image */}
       <View className="flex-1 items-center justify-center">
-        <Image
-          source={splashHero}
-          className="w-full h-full"
-          resizeMode="contain"
-        />
+        <Image source={Hero} className="w-full h-full" resizeMode="contain" />
       </View>
     </ImageBackground>
   );

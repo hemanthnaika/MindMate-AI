@@ -1,11 +1,18 @@
-import { ai, logo, profile } from "@/assets/icons";
+import {  logo, profile, quote } from "@/assets/icons";
 import cn from "clsx";
-import { ArrowRight, Bell, Plus } from "lucide-react-native";
+import {
+ 
+  List,
+  MessageSquare,
+
+  Settings,
+} from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
-  StatusBar,
+  ImageBackground,
+
   Text,
   TouchableOpacity,
   View,
@@ -20,6 +27,7 @@ import { addMood, getMood } from "@/services/mood.services";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
+import { BlurView } from "expo-blur";
 
 const Card = ({
   icon,
@@ -32,8 +40,8 @@ const Card = ({
 }) => (
   <TouchableOpacity
     className={cn(
-      "w-14 h-14 rounded-full items-center justify-center",
-      active ? "bg-primary" : "bg-secondary/40",
+      "w-14 h-14 rounded-md items-center justify-center ",
+      active ? "bg-primary" : "bg-neutral",
     )}
     onPress={onPress}
   >
@@ -93,152 +101,140 @@ const Index = () => {
   }, [moodData]);
 
   return (
-    <SafeAreaView className="flex-1 bg-secondary px-5">
-      <StatusBar barStyle="light-content" />
-
-      <FlatList
-        data={firstFive}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => <HabitCard habit={item} />}
-        contentContainerStyle={{ paddingBottom: 40, gap: 12 }}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <Text className="text-white text-center mt-6">
-            No incomplete habits today 🎉
+    <View className="flex-1 bg-secondary">
+      <SafeAreaView className="flex-row items-center justify-between bg-neutral px-7 pb-5">
+        <TouchableOpacity
+          onPress={() => router.push("/profile")}
+          className="bg-primary p-1 rounded-full"
+        >
+          <Image
+            source={session?.user.image || profile}
+            className="w-10 h-10 rounded-full"
+          />
+        </TouchableOpacity>
+        <View className="flex-row items-center gap-1">
+          <Image source={logo} className="w-10 h-10" resizeMode="contain" />
+          <Text className="text-primary font-Plus-Bold text-lg">
+            MindMate-AI
           </Text>
-        }
-        ListHeaderComponent={
-          <>
-            {/* HEADER */}
-            <View className="flex-row items-center justify-between mt-2">
-              <TouchableOpacity
-                onPress={() => router.push("/profile")}
-                className="bg-primary p-1 rounded-full"
-              >
-                <Image
-                  source={session?.user.image || profile}
-                  className="w-10 h-10 rounded-full"
-                />
-              </TouchableOpacity>
-
-              <Image source={logo} className="w-10 h-10" />
-
-              <TouchableOpacity>
-                <Bell size={22} color="#fff" />
-              </TouchableOpacity>
-            </View>
-
-            {/* GREETING */}
-            <View className="mt-8">
-              <Text className="text-white text-3xl font-Poppins-ExtraBold">
-                {greeting} 👋
+        </View>
+        <TouchableOpacity>
+          <Settings size={22} color="#fff" />
+        </TouchableOpacity>
+      </SafeAreaView>
+      <SafeAreaView edges={["bottom"]} className="px-7 flex-1">
+        <FlatList
+          data={firstFive}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => <HabitCard habit={item} />}
+          ListEmptyComponent={
+            <Text className="text-white text-center my-5 font-Plus-Bold text-lg">
+              No incomplete habits today 🎉
+            </Text>
+          }
+          ListHeaderComponent={
+            <>
+              <Text className="text-white font-Plus-Bold  mt-6 text-4xl">
+                {greeting},{session?.user.name}{" "}
               </Text>
-              <Text className="text-white text-4xl font-Poppins-ExtraBold mt-1">
-                {session?.user.name}
-              </Text>
-            </View>
-
-            {/* MOOD / SLEEP / STRESS */}
-            {[
-              {
-                title: "How are you feeling today?",
-                icons: moodIcons,
-                value: mood,
-                set: setMood,
-              },
-              {
-                title: "How was your sleep?",
-                icons: sleepIcons,
-                value: sleep,
-                set: setSleep,
-              },
-              {
-                title: "How stressed are you?",
-                icons: stressIcons,
-                value: stress,
-                set: setStress,
-              },
-            ].map((item, idx) => (
-              <View key={idx} className="bg-card rounded-2xl p-5 mt-5">
-                <Text className="text-white text-lg font-Inter-Medium mb-3">
-                  {item.title}
-                </Text>
-                <View className="flex-row justify-between">
-                  {item.icons.map((icon, i) => (
-                    <Card
-                      key={i}
-                      icon={icon}
-                      active={item.value === i + 1}
-                      onPress={() => item.set(i + 1)}
-                    />
-                  ))}
-                </View>
-              </View>
-            ))}
-
-            <TouchableOpacity
-              onPress={handleAddMood}
-              disabled={mutation.isPending}
-              className="bg-primary rounded-full py-4 mt-6"
-            >
-              <Text className="text-white text-center font-Inter-Bold">
-                Save Today’s Mood
-              </Text>
-            </TouchableOpacity>
-
-            {/* AI CARD */}
-            <View className="bg-card rounded-2xl p-5 mt-10 flex-row items-center">
-              <View className="flex-1">
-                <Text className="text-white text-2xl font-Poppins-ExtraBold">
-                  MindMate AI
-                </Text>
-                <Text className="text-white mt-2">
-                  A safe place to talk, reflect, and feel supported.
-                </Text>
-                <TouchableOpacity
-                  onPress={() => router.push("/chatWithAi")}
-                  className="bg-primary mt-4 py-3 rounded-full flex-row justify-center items-center gap-2"
-                >
-                  <Text className="text-white font-Inter-Bold">
-                    Start a Chat
+              {[
+                {
+                  title: "How are you feeling today?",
+                  icons: moodIcons,
+                  value: mood,
+                  set: setMood,
+                },
+                {
+                  title: "How was your sleep?",
+                  icons: sleepIcons,
+                  value: sleep,
+                  set: setSleep,
+                },
+                {
+                  title: "How stressed are you?",
+                  icons: stressIcons,
+                  value: stress,
+                  set: setStress,
+                },
+              ].map((item, idx) => (
+                <View key={idx} className="mt-5">
+                  <Text className="text-white text-lg font-Plus-Medium mb-3">
+                    {item.title}
                   </Text>
-                  <ArrowRight size={18} color="white" />
-                </TouchableOpacity>
-              </View>
-              <Image source={ai} className="w-36 h-36" />
-            </View>
-
-            {/* HABITS HEADER */}
-            <View className="mt-8">
-              <View className="flex-row justify-between items-center">
-                <Text className="text-white text-xl font-Inter-Bold">
-                  Daily Habits
+                  <View className="flex-row justify-between">
+                    {item.icons.map((icon, i) => (
+                      <Card
+                        key={i}
+                        icon={icon}
+                        active={item.value === i + 1}
+                        onPress={() => item.set(i + 1)}
+                      />
+                    ))}
+                  </View>
+                </View>
+              ))}
+              <TouchableOpacity
+                onPress={handleAddMood}
+                disabled={mutation.isPending}
+                className="bg-primary rounded-full py-4 mt-6"
+              >
+                <Text className=" text-center font-Plus-Bold">
+                  Save Today’s Mood
                 </Text>
-                <TouchableOpacity className="bg-primary px-4 py-2 rounded-full flex-row gap-2 items-center">
-                  <Text className="text-white font-Inter-Bold text-sm">
+              </TouchableOpacity>
+
+              <View className="mt-10 flex-row justify-between gap-5 items-center">
+                <TouchableOpacity
+                  className="bg-neutral flex-1  p-5 rounded-md items-center"
+                  onPress={() => router.push("/(tabs)/habits")}
+                >
+                  <List color="#fff" />
+                  <Text className="text-white font-Plus-Medium mt-2">
                     Add Habit
                   </Text>
-                  <Plus size={14} color="white" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="bg-neutral flex-1  p-5 rounded-md items-center"
+                  onPress={() => router.push("/chatWithAi")}
+                >
+                  <MessageSquare color="#fff" />
+                  <Text className="text-white font-Plus-Medium mt-2">
+                    Start Chat
+                  </Text>
                 </TouchableOpacity>
               </View>
 
-              <Text className="text-white mt-2">
-                Check off what you’ve completed today
-              </Text>
-
-              {isLoading && (
-                <Text className="text-white text-center mt-4">Loading...</Text>
-              )}
-              {isError && (
-                <Text className="text-red-500 text-center mt-4">
-                  Failed to load habits
+              <ImageBackground
+                source={quote}
+                className="w-full h-96 mt-10 justify-center items-center rounded-xl overflow-hidden relative"
+              >
+                <BlurView
+                  intensity={99}
+                  tint="dark"
+                  className="absolute inset-0"
+                />
+                {/* Text */}
+                <Text className="text-white text-center font-Plus-Bold text-2xl px-4 ">
+                  &quot;I am capable of navigating whatever this day brings with
+                  grace and inner peace.&quot;
                 </Text>
-              )}
-            </View>
-          </>
-        }
-      />
-    </SafeAreaView>
+              </ImageBackground>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-white font-Plus-Bold my-7 text-xl">
+                  Today&apos;s Habits
+                </Text>
+                <TouchableOpacity onPress={() => router.push("/(tabs)/habits")}>
+                  <Text className="text-primary font-Plus-Medium">
+                    View all
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          }
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 
